@@ -219,6 +219,133 @@ We can view a directed graph as a filter and all probability distribution $p(\bf
 \end{equation}
 Some factors in $\prod_k p(\bf x_k|\rm{pa}_k)$ will disappear if they are not relative to $\bf x_i$.
 \subsection{Markov Random Fields}
+A \emph{Markov random field}, also known as a \emph{Markov network} or an \emph{undirected graphical model} , has a set of nodes each of which corresponds to a variable or group of variables, as well as a set of links each of which connects a pair of nodes. The links are undirected, that is they do not carry arrows.
+\subsubsection{Conditional independence properties}
+Properties in an undirected graph is much simpler than those in a directed graph because the nodes linked in a pair is symmetric, and there is no head-to-head situation. So if all paths that connect nodes in $A$ to nodes in $B$ pass through one or more nodes in the set $C$, then all such paths are 'blocked' and so the conditional independence property hold, aka. $$A\ci B|C$$.
+\subsubsection{Factorization properties}
+If two nodes are not linked directly, then we can obtain
+\begin{equation}\label{eq8.10}
+  p(x_i,x_j|\bf{x}_{\backslash\{i,j\}}) = p(x_i|\bf x_{\backslash\{i,j\}})p(x_j|\bf x_{\backslash\{i,j\}})
+\end{equation}
+\textbf{clique}:a subset of nodes in a graph such that there exists a link between all pairs of nodes in the subset. \newline
+\textbf{maximal clique}:a clique such that it is not possible to include any
+other nodes from the graph in the set without it ceasing to be a clique.\newline
+Denote a clique by $C$ and the set of variables in that clique by $\bf x_C$. Then the joint distribution is written as a product of \emph{potential functions}
+$\phi_C(\bf x_C)$ over maximal cliques of the graph
+\begin{equation}\label{eq8.11}
+  p(\bf x) = \frac{1}{Z}\prod_{C}\phi_C(\bf x_C).
+\end{equation}
+Here the quantity Z, sometimes called the partition function, is a normalization constant
+and is given by
+\begin{equation}\label{eq8.12}
+  Z=\sum_{X}\prod_{C}\phi_C(\bf x_C)
+\end{equation}
+\emph{energy function} $E(\bf x_C)$
+\begin{equation}\label{eq8.13}
+  \phi_C(\bf x_C) = \exp\{-E(\bf x_C\}
+\end{equation}
+\subsubsection{Relation to directed graphs}
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{./imgs/GM3.eps}
+  \caption{}\label{GM3}
+\end{figure}
+Given a directed graph as a chain shown in figure\ref{GM3}(a).
+\begin{equation}\label{eq8.14}
+  p(\bf x) =p(x_1)p(x_2|x_1)p(x_3|x_2)...p(x_N|x_{N-1})
+\end{equation}
+Also, for undirected graph shown in figure\ref{GM3}(b).
+\begin{equation}\label{eq8.15}
+  p(\bf x) = \frac{1}{Z}\psi_{1,2}(x_1,x_2)\psi_{2,3}(x_2,x_3)...\psi_{N-1,N}(x_{N-1},x_N).
+\end{equation}
+And we define
+\begin{align}\label{eq8.15}
+  \psi_{1,2}(x_1,x_2) = p(x_1)p(x_2|x_1) \\
+  \psi_{2,3}(x_2,x_3)=p(x_3|x_2) \\
+  \vdots \\
+  \psi_{N-1,N}(x_{N-1},x_N) = p(x_N|x_{N-1})
+\end{align}
 
-\subsection{Inference in Graphical Models}
+\chapter{Algorithms}
+\section{Inference Algorithms in Graphical Models}
+\subsection{Inference on a chain}
+Consider the graph shown in figure\ref{GM3}. The joint distribution for this graph takes the form
+\begin{equation}\label{eq8.16}
+  p(\bf x) = \frac{1}{Z}\psi_{1,2}(x_1,x_2)\psi_{2,3}(x_2,x_3)...\psi_{N-1,N}(x_{N-1},x_N).
+\end{equation}
+If we want to get marginal distribution $p(x_n)$ for a specific node, we should sum the joint distribution over all variables except $x_n$, so that
+\begin{equation}\label{eq8.17}
+  p(x_n) = \sum_{x_1}...\sum_{x_{n-1}}\sum_{x_{n+1}}...\sum_{x_N}p(\bf x)
+\end{equation}
+But this way will cost so much computational resources, so we want to find another simpler way:
+\begin{align}\label{eq8.18}
+  p(x_n) =  & \frac{1}{Z}[\sum_{x_{n-1}}\psi_{n-1,n}(x_{n-1},x_n)\dots[\sum_{x_2}\psi_{2,3}(x_2,x_3)[\sum_{x_1}\psi_{1,2}(x_1,x_2)]]\dots] \\
+   & [\sum_{x_{n+1}}\psi_{n,n+1}(x_n,x_{n+1})\dots[\sum_{x_N}]\psi_{N-1,N}(x_{N-1},x_{N})]\dots]  \\
+   = & \frac{1}{Z}\mu_{\alpha}(x_n)\mu_{\beta}(x_n)
+\end{align}
+As shown in figure\ref{GM4}, we can see message passed in the chain and we can compute $\mu_{\alpha}(x_i)$ and $\mu_{\beta}(x_i)$ recursively for any $i=1, 2, \dots, N$.
+\begin{equation}\label{eq8.19}
+  \mu_{\alpha}(x_n) = \sum_{x_{n-1}}\psi_{n-1,n}(x_{n-1},x_n)\mu_{\alpha}(x_{n-1}).
+\end{equation}
+and
+\begin{equation}\label{eq8.20}
+  \mu_{\alpha}(x_2) = \sum_{x_1}\psi_{1,2}(x_1,x_2).
+\end{equation}
+Similar for $\mu_{\beta}(x_n)$
+\begin{figure}[bth]
+  \centering
+  \includegraphics[width=\textwidth]{./imgs/GM4.eps}
+  \caption{}\label{GM4}
+\end{figure}
+\subsection{Inference on a tree: sum-product algorithm}
+Tree do not have loops.
+\subsubsection{factor graphs}
+In a factor graph, there is a node (depicted as usual by \textbf{a circle}) for every variable
+in the distribution, as was the case for directed and undirected graphs. There are also
+additional nodes (depicted by \textbf{small squares}) for each factor fs(xs) in the joint distribution.\newline
+For example,
+\begin{equation}\label{eq8.21}
+  p(\bf{x}) = f_a(x_1,x_2)f_b(x_1,x_2)f_c(x_2,x_3)f_d(x_3)
+\end{equation}
+can be expressed by the factor graph shown in figure\ref{GM5}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{./imgs/GM5.jpg}
+  \caption{Example of a factor graph}\label{GM5}
+\end{figure}
+Factor graphs are said to be bipartite because they consist of two distinct kinds
+of nodes, and all links go between nodes of opposite type.
+\subsubsection{sum-product algorithm}
+We shall now make use of the factor graph framework to derive a powerful class
+of efficient, exact inference algorithms that are applicable to tree-structured graphs.
+Here we shall focus on the problem of evaluating local marginals over nodes or
+subsets of nodes, which will lead us to the sum-product algorithm.\newline
+Our goal is to exploit the structure of
+the graph to achieve two things: (i) to obtain an efficient, exact inference algorithm
+for finding marginals; (ii) in situations where several marginals are required to allow
+computations to be shared efficiently.
+\textbf{finding the marginal $p(x)$ for a particular variable node $x$}\newline
+$$p(\bf x) = \prod_{s\in ne(x)}F_s(x,X_s)   $$
+$$p(x) = \prod_{s\in ne(x)}[\sum_{X_s}F_s(x,X_s)] = \prod_{s\in ne(x)}\mu_{f_s\rightarrow x}(x) $$
+$$F_s(x,X_s) =  f_s(x,x_1,...x_M)G_1(x,X_{s1})...G_M(x,X_{sM})$$
+$$\mu_{x_m\rightarrow f_s}(x_m) \equiv \sum_{X_{sm}}G_m(x_m,X_{sm})$$
+We have therefore introduced two distinct kinds of message, those that go from factor
+nodes to variable nodes denoted $\mu_{f\rightarrow x}(x)$, and those that go from variable nodes to
+factor nodes denoted $\mu_{x\rightarrow f}(x).$
+\textbf{Illustration: example}
+\textbf{max-sum algorithm}
+Two other common tasks are to find a setting of the variables that has the largest probability
+and to find the value of that probability. We therefore seek an efficient algorithm for finding the value of x that maximizes
+the joint distribution p(x) and that will allow us to obtain the value of the
+joint distribution at its maximum.
+\subsection{Exact inference in a general graph}
+Goal: deal with graphs having loops.\newline
+\textbf{Loopy belief progpagation}
+One simple approach to approximate inference in graphs with
+loops, which builds directly on the previous discussion of exact inference in trees.
+The idea is simply to apply the sum-product algorithm even though there is no guarantee
+that it will yield good results. For some graphs, the algorithm will converge, whereas for others it will not. \newline
+We will say that a (variable or factor) node a has a message pending on its link to a node b if node a has received any
+message on any of its other links since the last time it send a message to b.
+
 \end{document} 
