@@ -19,15 +19,15 @@
 \def\ci{\perp\!\!\!\perp}
 \pagestyle{fancy}
 %% define some commands
+\newcommand{\normD}{\mathcal{N}}
+\newcommand{\mrm}{\mathrm}
+\newcommand{\mbf}{\mathbf}
+\newcommand{\mcal}{\mathcal}
 \newcommand{\ud}{\mathrm{d}}
 \newcommand{\e}{\varepsilon}
 \newcommand{\up}{\mathrm}
 \def\dbar{\mathrm{\mathchar'26\mkern-12mu d}}
 \newcommand{\wave}{\scriptsize{\sim}}
-\renewcommand{\bf}{\mathbf}
-\renewcommand{\cal}{\mathcal}
-\newcommand{\mbf}{\mathbf}
-\newcommand{\mcal}{\mathcal}
 \newcommand{\bb}{\mathbb}
 \newcommand{\mbb}{\mathbb}
 \newcommand{\imp}[1]{\textit{#1}}
@@ -186,8 +186,7 @@ Using \emph{maximizing the posterior distribution, MAP} and we find the maximum 
 \end{equation}
 so this is similar to regularize sum-od-squares error function with $\lambda=\frac{\alpha}{\beta}$
 \subsection{Decision Theory}
-\textbf{minimizing the misclassification rate}\newline
-$p(\mathrm{mistake})$ and $p(\mathrm{correct})$
+\textbf{minimizing the misclassification rate} $p(\mathrm{mistake})$ and $p(\mathrm{correct})$ \newline
 \textbf{minimizing the expected loss}\newline
 can assign different loss efficient to different error
 \begin{equation}\label{eq1.8}
@@ -197,12 +196,11 @@ $p(\mathrm{x},\mathcal{C}_k) = p(\mathcal{C}_k|\mathrm{x})p(\mathrm{x})$ to elim
 \textbf{ inference and decision}\newline
 Three distinct approaches:
 \begin{enumerate}
-  \item first solve $p(\mathrm{x}|\mathcal C_k)$ for each class individualy. also $p(\mathcal C_k)$  then figure out $p(\mathcal C_k|\mathrm x) = \frac{p(\mathrm x|\mathcal C_k)p(\mathcal C_k)}{p(\mathrm x)}$ and $p(\mathrm x)$ can be gotten from $p(\mathrm x) = \sum_kp(\mathrm x|\mathcal C_k)p(\mathcal C_k)$ this is equivalent to model the joint distribution $p(\mathrm x, \mathcal C_k)$
-  \item determining posterior class probabilities $p(\mathcal C_k|\mathrm x )$  and then use decision theory.  \emph{discriminative model}.
-  \item find $f(\mathrm x)$ map \textbf{x} directly to a class label.
+    \item First solve $p(\mrm{x}|\mathcal C_k)$ as well as $p(\mathcal C_k$ for each class individually, then figure out $p(\mathcal C_k|\mrm x) = \frac{p(\mathrm x|\mathcal C_k)p(\mathcal C_k)}{p(\mrm x)}$ and $p(\mrm x)$ can be gotten from $p(\mrm x) = \sum_kp(\mrm x|\mathcal C_k)p(\mathcal C_k)$. This is equivalent to model the joint distribution $p(\mrm x, \mathcal C_k)$
+  \item Determine posterior class probabilities $p(\mathcal C_k|\mrm x)$  and then use decision theory.  \emph{discriminative model}.
+  \item Find $f(\mathrm x)$ which maps $\mrm{x}$ directly to a class label.
 \end{enumerate}
-the first approach is too time-consuming and demanding.\newline
-the last one is simplest but not so robust as approach2 because we can see a lot of information from the posterior probabilities:
+The first approach is too time-consuming and demanding, while the last one is simplest but not so robust as approach.2 because we can see a lot of information from the posterior probabilities:
 \begin{itemize}
   \item  minimizing risk,  by adjusting $L_{kj}$ to get different loss function and minimize risk
   \item reject option
@@ -274,6 +272,10 @@ this is \emph{mutual information} between x and y  and
 I[x,y] = H[x]-H[x|y]
 \end{equation}
 The mutual information represents the reduction in uncertainty about x as a consequence of the new observation y.
+\subsection{Some other distributions}
+\subsubsection{Poisson distribution}
+\subsubsection{Laplace dsitribution}
+
 \subsection{Conclusion}
 The most important thought in this chapter is difference between Bayesian and non Bayesian,, e.g. ML and MAP.  Sometimes ML is equivalent to minimizing error function and MAP can be equivalent to them, too.\newline
 The most important thing stepping from non Bayesian to Bayesian, is the inclusion of prior probability and we use $$\mathrm{posterior} \propto \mathrm{likelihood} \times\mathrm{prior}$$
@@ -522,7 +524,6 @@ to have little influence on the posterior distribution, we seek a form of prior 
 In this chapter, we mainly want to solve the problem that when the posterior distribution is no longer Gaussian, how can we integrate exactly over the parameter vector.\newline
 So Laplace approximation can help us to transform a non-Gaussian distribution  into a Gaussian distribution.
 \section{Hessian Matrix}
-This section is mainly focusing on how to compute Hessian Matrix and its inverse efficiently using some approximation.  TO BE CONTINUED. 
 \section{FOR NEW}
 
 \chapter{Models}
@@ -718,7 +719,7 @@ where $R$ is a diagonal matrix and $R_{nn} = y_n(1-y_n)$
 \subsubsection{Bayesian Logistic Regression}
 assume the prior $p(\mathrm w) = \mathcal N(\mathrm w|\mathrm m_0,\mathrm S_0)$
 $$p(\mathrm w|\mathrm t) \propto p(\mathrm w)p(\mathrm t|\mathrm w)$$
-and 
+and
 $$\ln p(\mathrm w|\mathrm t) = -\frac12(\mathrm w-\mathrm m_0)^T\mathrm S_0^{-1}(\mathrm w-\mathrm m_0)+\sum_{n=1}^N\{t_n\ln y_n +(1-t_n)\ln (1-y_n)\} + const$$
 $$y_n = \sigma(\mathrm w^T\phi_n)$$
 and using Laplace approximation, we obtain posterior distribution
@@ -731,7 +732,7 @@ $$q(\mathrm w) = \mathcal N(\mathrm w|\mathrm w_{\mathrm {MAP}}, \mathrm S_N)$$
 
 \section{Neural Networks}
 \subsection{Feed-forward Network Functions}
-The linear models for regression and classification discussed in Chapters 3 and 4, respectively, are based on linear combinations of fixed nonlinear basis functions $\phi_j(\mathrm x)$ and take the form 
+The linear models for regression and classification discussed in Chapters 3 and 4, respectively, are based on linear combinations of fixed nonlinear basis functions $\phi_j(\mathrm x)$ and take the form
 \begin{equation}\label{eq3.4.1}
   y(\mathrm x,\mathrm w) = f(\sum_{j=1}^Mw_j\phi_j(\mathrm x))
 \end{equation}
@@ -756,7 +757,7 @@ when we find $\mathrm w$ by minimizing $E(\mathrm w)$, we obtain $\mathrm w_{ML}
 
 Then consider binary \textbf{classification problem}
 $$p(t|\mathrm  x,\mathrm w) = y(\mathrm  x,\mathrm  w)^t\{1-y(\mathrm  x,\mathrm  w)\}^{1-t}$$
-cross-entropy error function 
+cross-entropy error function
 \begin{equation}\label{eq3.4.4}
 E(\mathrm w) = -\sum_{n=1}^N\{t_n\ln y_n+(1-t_n)\ln(1-y_n)\}
 \end{equation}
@@ -838,7 +839,7 @@ p(\mathrm x,t) = \frac1N\sum_{n=1}^{N}f(\mathrm x-\mathrm x_n,t-t_n)
 \end{equation}
 $f(\dot)$ is the component density function. And finally we can obtain :
 \begin{equation}
-k(\mathrm x,\mathrm x_n) = \frac{g(\mathrm x-\mathrm x_n)}{\sum_mg(\mathrm x-\mathrm x_m)}  
+k(\mathrm x,\mathrm x_n) = \frac{g(\mathrm x-\mathrm x_n)}{\sum_mg(\mathrm x-\mathrm x_m)}
 \end{equation}
 where $g(\mathrm x) = \int_{-\infty}^{\infty}f(\mathrm x,t)\mathrm dt$
 \textbf{PROPERTY}:  giving more weight to the data points $\mathrm x_n$ that are close to $\mathrm x$.
@@ -865,7 +866,7 @@ If the data set is not linearly seperable in the original space, we can project 
 
 More application of SVM will be focused on Multiclass SVMs, SVM for regression and overlapping classification.
 \subsection{Relevance Vector Machines}
-Limitation of SVM: 
+Limitation of SVM:
 \begin{enumerate}
   \item the outputs of an SVM represent decisions rather than posterior probabilities.
   \item  the SVM was originally formulated for two classes, and the extension to $K > 2$ classes is problematic.
@@ -1049,7 +1050,15 @@ And we define
 
 
 
+\section{Continuous Latent Variables}
+The simplest continuous latent variable model assumes Gaussian distributions
+for both the latent and observed variables and makes use of a linear,Gaussian dependence of the observed variables on Ihe slate of the latent variables. This leads
+to a probabilistic formulation of the well-known technique of principal component
+analysis (PCA), as well as to a related model called factor analysis.
+\subsection{Principal Component Analysis}
+
 \section{FOR NEW}
+
 
 \chapter{Algorithms}
 \section{Nonparametric Methods}
@@ -1166,4 +1175,164 @@ that it will yield good results. For some graphs, the algorithm will converge, w
 We will say that a (variable or factor) node a has a message pending on its link to a node b if node a has received any
 message on any of its other links since the last time it send a message to b.
 
+\section{Mixture Models and EM}
+This section is mainly about chap.9 in \textbf{PRML}.\newline
+We can use mixture models to cluster data, as well as build more complex probability distributions. Therefore we begin our discussion of mixture distributions by considering the problem of finding clusters in a set of data points. Then we introduce the latent variable view of mixture distributions in which the discrete variables can be interpreted as defining assignments of data points to specific component of the mixture. Finally we discuss EM in some generality.
+\subsection{K-means Clustering}
+Suppose we have a data set $\{\mrm x_1,\cdots, \mrm x_N\}$ consisting of $N$ observations of a random $D-$dimensional Euclidean variable $\mrm x$. Our goal is to partition the data set into some number $K$ of clusters.  Firstly we consider a fixed value of $K$. We can formalize this notion by first introducing a set of $D-$dimensional vectors $\mu_k$, where $k=1,\cdots,K$, in which $\mu_k$ is a prototype associated with the $k^{th}$ cluster. For each data point $\mrm x_n$, we introduce a corresponding set of binary indicator variables $r_{nk} \in \{0,1\}$, describing which cluster $\mrm x_n$ is assigned to. We can then define an objective function
+\begin{equation}
+J = \sum_{n=1}^{N}\sum_{k=1}^{K}r_{nk}\|\mrm x_n-\mu_k\|^2.
+\end{equation}
+Firstly we choose some initial values for the $\mu_k$. Then in the first phase we minimize $J$ with respect to the $r_{nk}$, keeping the $\mu_k$ fixed. In the second phase we minimize $J$ with respect to the $\mu_k$, keeping $r_{nk}$ fixed. This two-stage optimization is then repeated until convergence. And we obtain
+\begin{gather}\label{}
+  r_{nk}=\{\begin{matrix}
+                 1 & \mrm{if }k=\mrm{arg min_j}\|\mrm x_n-\mu_j\|^2 \\
+                 0 & \mrm{otherwise}.
+               \end{matrix} \\
+  \mu_k = \frac{\sum_nr_{nk}\mrm x_n}{\sum_nr_{nk}}
+\end{gather}
+A direct implementation of the $K-$means algorithm as discussed here cna be slow because in each E step it is necessary to compute the Euclidean distance between every prototype vector and every data point. Various schemes have been proposed for speeding up this algorithm.
+
+\subsection{Mixtures of Gaussians}
+Recall from previous chapter the Gaussian mixture distribution can be written as linear superposition of Gaussians  in the form
+\begin{equation}\label{}
+  p(\mbf x) = \sum_{k=1}^{K}\pi_k\normD(\mbf x|\mu_k,\Sigma_k).
+\end{equation}
+Then we can introduce a $K-$dimensional binary random variable $\mbf z$ having a 1-of-$K$ representation in which a particular element $z_k$ is equal to 1 and all other elements are equal to 0. So $z_k \in \{0,1\}$, $\sum_{k}z_k=1$, and $p(z_k=1)=\pi_k$. So
+\begin{equation}\label{}
+  p(\mrm z) = \prod_{k=1}^{K}\pi_k^{z_k}.
+\end{equation}
+Similarly, the conditional distribution of $\mrm x$ given a particular value for $\mrm z$ is a Gaussian
+\begin{equation}\label{}
+  p(\mrm x|z_k=1) = \normD(\mrm x|\mu_k, \Sigma_k).
+\end{equation}
+So the marginal distribution of $\mrm x$ is then obtained:
+\begin{equation}\label{}
+  p(\mrm x) = \sum_{\mrm z}p(\mrm z)p(\mrm x|\mrm z) = \sum_{k=1}^{K}\pi_k\normD(\mrm x|\mu_k,\Sigma_k)
+\end{equation}
+And we can gain the conditional probability of $\mrm z$ given $\mrm x$ using Bayes' theorem
+\begin{equation}\label{eq3.3.0}
+  \gamma(z_k) \equiv p(z_k=1|\mrm x)=\frac{p(z_k=1)p(\mrm x|z_k=1)}{\sum_{j=1}^{K}p(z_j=1)p(\mrm x|z_j=1)} =  \frac{\pi_k\normD(\mrm x|\mu_k, \Sigma_k)}{\sum_{j=1}^{K}\pi_j\normD(\mrm x|\mu_j,\Sigma_j)}.
+\end{equation}
+\subsubsection*{Maximum likelihood}
+Suppose we have a data set of observations $\{\mrm x_1, \cdots, \mrm x_N\}$, and we wish to model this data using a mixture of Gaussians. Denote this data set as an $N\times D$ matrix $\mrm X$ in which the $n^{th}$ row is given by $\mrm x_n^T$, latent variables as an $N\times K$ matrix $\mrm Z$ with rows $\mrm z_n^T$. Assume i.i.d observations, we can obtain
+\begin{equation}\label{}
+  \ln p(\mrm X|\pi, \mu, \Sigma) = \sum_{n=1}^{N}\ln\{\sum_{k=1}^{K}\pi_k\normD(\mrm x_n|\mu_k, \Sigma_k)\}.
+\end{equation}
+Here, we may encounter a significant problem about singularity.
+\subsubsection*{EM for Gaussian mixtures}
+Setting the derivatives of $\ln p(\mrm X|\pi,\mu,\Sigma)$ with respect to the means $\mu_k$ of the Gaussian components to zero, we obtain
+\begin{equation}\label{}
+  0=-\sum_{n=1}^{N}\frac{\pi_k\normD (\mrm x_n|\mu_k,\Sigma_k)}{\sum_j\pi_j\normD(\mrm x_n|\mu_j,\Sigma_j)}\Sigma_k(\mrm x_n-\mu_k).
+\end{equation}
+We assume $\Sigma_k$ to be nonsingular so
+\begin{equation}\label{eq3.3.1}
+  \mu_k=\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})\mrm x_n
+\end{equation}
+where we have defined
+\begin{equation}\label{}
+  N_k \equiv \sum_{n=1}^{N}\gamma(z_{nk})
+\end{equation}
+We see that the mean $\mu_k$ for the $k^{th}$ Gaussian
+component is obtained by taking a weighted mean of all of the points in the data set,
+in which the weighting factor for data point $\mrm x_n$ is given by the posterior probability
+$\gamma(z_{nk})$ that component $k$ was responsible for generating $\mrm x_n$.
+
+If we set the derivative of $\ln p(\mrm X|\pi,\mu,\Sigma)$ with respect to $\Sigma_k$ to zero , we obtain
+\begin{equation}\label{eq3.3.2}
+  \Sigma_k=\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})(\mrm x_n-\mu_k)(\mrm x_n-\mu_k)^T.
+\end{equation}
+
+Finally we maximize $\ln p(\mrm X|\pi,\mu,\Sigma)$ with respect to $\pi_k$ using a Lagrange multiplier and we obtain
+\begin{equation}\label{eq3.3.3}
+  \pi_k=\frac{N_k}{N}
+\end{equation}
+We must emphasize that these results \ref{eq3.3.1}, \ref{eq3.3.2}, \ref{eq3.3.3} do not constitute a close-form solution for the parameters of the mixture model because $\gamma(z_{nk})$ depend on those parameters. But we can use the EM algorithm in a simple iteration:
+\begin{enumerate}
+  \item Initialize the means $\mu_k$, covariances $\Sigma_k$ and mixing coefficients $\pi_k$, and evaluate the initial value of the log likelihood.
+  \item \textbf{E step.} Evaluate the responsibilities using the current parameter values using \ref{eq3.3.0}
+  \item \textbf{M step.} Re-estimate the parameters using the current responsibilities using \ref{eq3.3.1}, \ref{eq3.3.2},\ref{3.3.3}.
+  \item Evaluate the log likelihood
+  \begin{equation}\label{}
+    \ln p(\mrm X|\mu,\Sigma,\pi)=\sum_{n=1}^{N}\ln \{\sum_{k=1}^{K}\pi_k\normD(\mrm x_n|\mu_k,\Sigma_k)\}
+  \end{equation}
+\end{enumerate}
+
+\subsection{An Alternative View of EM}
+In this section, we present a complementary view of the EM algorithm that recognizes the key role played by latent variables.
+
+Denote:
+\begin{itemize}
+  \item $\mrm X$: all observed data, $n^{th}$ row represents $\mrm x_n^T$.
+  \item $\mrm Z$: all latent variables, $n^{th}$ row represents $\mrm z_n^T$.
+  \item $\theta$: all model parameters.
+\end{itemize}
+So the log likelihood function is given by
+\begin{equation}\label{}
+  \ln p(\mrm X|\theta) = \ln\{\sum_{\mrm z}p(\mrm X,\mrm Z|\theta)\}.
+\end{equation}
+In practice, we are given only incomplete data set $\mrm X$ rather than complete $\{\mrm{X,Z}\}$, so our state of knowledge of the latent variables in $\mrm Z$ is given only by the posterior distribution $p(\mrm Z|\mrm X,\theta)$.
+
+So the general EM algorithm is summarized below. Given a joint distribution $p(\mrm X,\mrm Z|\theta)$ over observed variables $\mrm X$ and latent variables $\mrm Z$, governed by parameters $\theta$, the goal is to maximize the likelihood function $p(\mrm X|\theta)$ with respect to $\theta$.
+\begin{enumerate}
+  \item Choose an initial setting for the parameters $\theta^{\mrm{old}}$.
+  \item \textbf{E step} Evaluate $p(\mrm Z|\mrm X, \theta^{\mrm{old}})$.
+  \item \textbf{M step} Evaluate $\theta^{\mrm{new}}$ given by 
+  \begin{equation}\label{}
+    \theta^{\mrm{new}} = \mrm{argmax}_\theta \mathcal Q(\theta,\theta^{\mrm{old}})
+  \end{equation} 
+  where 
+  \begin{equation}\label{}
+    \mathcal Q(\theta,\theta^{\mrm{old}}) = \sum_\mrm{z} p(\mrm Z|\mrm X,\theta^{{\mrm{old}}})\ln p(\mrm X,\mrm Z|\theta).
+  \end{equation}
+  \item Check for convergence of either the log likelihood or the parameter values. If the convergence criterion is not satisfied, then let
+  \begin{equation}\label{}
+    \theta^{\mrm{old}} \leftarrow \theta^{\mrm{new}} 
+  \end{equation}
+  and return to step 2.
+\end{enumerate}
+
+\subsubsection*{Gaussian mixtures revisited}
+Consider the problem of maximizing the likelihood for the complete data set $\{\mrm X,\mrm Z\}$
+\begin{equation}\label{}
+  p(\mrm{X,Z}|\mu,\Sigma,\pi) = \prod_{n=1}^{N}\prod_{k=1}^{K}\pi_k^{z_{nk}}\normD(\mrm x_n|\mu_k,\Sigma_k)^{z_{nk}}
+\end{equation}
+where $z_{nk}$ denotes the $k^{th}$ component of $\mrm z_n$. Taking logarithm and 
+\begin{equation}\label{}
+  \ln p(\mrm{X,Z}|\mu,\Sigma,\pi) = \sum_{n=1}^{N}\sum_{k=1}^{K}z_{nk}\{\ln \pi_k+\ln\normD(\mrm x_n|\mu_k,\Sigma_k)\}.
+\end{equation}
+Consider first the maximization with respect to the means and covariances. 
+\begin{equation}\label{}
+  \pi_k = \frac1N\sum_{n=1}^{N}z_{nk}
+\end{equation}
+so that the mixing coefficients are equal to the fractions of data points.
+\begin{equation}\label{}
+  \mrm E[z_{nk}] = \gamma(z_{nk}
+\end{equation}
+\begin{equation}\label{}
+  \mrm E_{\mrm z}[\ln p(\mrm X,\mrm Z|\mu,\Sigma,\pi)] =\sum_{n=1}^{N}\sum_{k=1}^{K}\gamma(z_{nk})\{\ln \pi_k+\ln \normD(\mrm x_n|\mu_k,\Sigma_k)\}.
+\end{equation}
+
+\subsubsection*{Relation to K-means}
+
+\subsection{The EM Algorithm in General}
+EM algorithm is a general technique for finding maximum likelihood solutions for probabilistic models having latent variables. Here we give a very general treatment of the EM algorithm. 
+
+Consider, observed variables $\mrm X$, latent variables $\mrm Z$ and parameters $\theta$. Our goal is to maximize the likelihood function given by 
+\begin{equation}\label{}
+  p(\mrm X|\theta)=\sum_{\mrm z}p(\mrm X,\mrm Z|\theta).
+\end{equation}
+Suppose that direct optimization of $p(\mrm X|\theta)$ is difficult, but that optimization of the complete-data likelihood function $p(\mrm X,\mrm Z|\theta)$ is easier. Next we introduce a distribution $q(\mrm Z)$ defined over the latent variables, and 
+\begin{equation}\label{}
+  \ln p(\mrm X|\theta) = \mathcal L(q,\theta)+\mrm{KL}(q\|p)
+\end{equation} 
+where 
+\begin{gather}\label{}
+  \mathcal L(q,\theta) = \sum_{\mrm z}q(\mrm Z)\ln\{\frac{p(\mrm X,\mrm Z|\theta)}{q(\mrm Z)}\} \\
+  \mrm {KL}(q\|p)=-\sum_{\mrm z}q(\mrm Z)\ln\{\frac{p(\mrm Z|\mrm X,\theta)}{q(\mrm Z)}\}.
+\end{gather}
+ Suppose the current value of the parameter vector is $\theta^{old}$. In the E step, the lower bound $\mathcal L(q,\theta^{old})$ is maximized with respect to $q(\mrm Z)$ while holding $\theta^{old}$ fixed. 
+ 
+ In the subsequent M step, the distribution $q(\mrm Z)$ is held fixed and the lower bound $\mathcal L(q, \theta)$ is maximized with respect to $\theta$ to give some new value $\theta^{new}$. 
+ 
 \end{document} 
