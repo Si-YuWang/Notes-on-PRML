@@ -1,2 +1,8 @@
-# Notes-on-PRML
-Here I will take some notes on *Pattern recognition and Machine Learning (Bibshop)* when I read it through. 
+Writing down some notes when I reading *Pattern Recognition and Machine Learning* by *Bibshop*. 
+
+
+
+Siyu Wang
+
+Department of Electronic Engineering, Tsinghua University
+

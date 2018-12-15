@@ -1,6 +1,6 @@
 \documentclass[a4paper]{book}
 
-\usepackage{amsmath,longtable,fancyhdr,booktabs,multirow,graphicx,float}
+\usepackage{amsmath,longtable,fancyhdr,booktabs,multirow,graphicx,float, bm}
 \usepackage{amssymb}
 \usepackage{color}
 \usepackage[colorlinks,
@@ -23,7 +23,7 @@
 \newcommand{\mrm}{\mathrm}
 \newcommand{\mbf}{\mathbf}
 \newcommand{\mcal}{\mathcal}
-\newcommand{\ud}{\mathrm{d}}
+
 \newcommand{\e}{\varepsilon}
 \newcommand{\up}{\mathrm}
 \def\dbar{\mathrm{\mathchar'26\mkern-12mu d}}
@@ -33,6 +33,43 @@
 \newcommand{\imp}[1]{\textit{#1}}
 \newcommand{\bs}{\boldsymbol}
 \newcommand{\mbs}{\boldsymbol}
+
+\newcommand{\ud}{\mathrm{d}}
+\newcommand{\mx}{\mrm x}
+\newcommand{\mw}{\mrm w}
+
+\newcommand{\mB}{\mrm B}
+\newcommand{\mW}{\mrm W}
+
+\newcommand{\TT}{\mbf T}
+\newcommand{\UU}{\mbf U}
+\newcommand{\VV}{\mbf V}
+\newcommand{\XX}{\mbf X}
+\newcommand{\ZZ}{\mbf Z}
+\newcommand{\WW}{\mbf W}
+\newcommand{\RR}{\mbf R}
+\newcommand{\MM}{\mbf M}
+\newcommand{\KK}{\mbf K}
+\newcommand{\II}{\mbf I}
+\newcommand{\CC}{\mbf C}
+
+
+\newcommand{\ww}{\mbf w}
+\newcommand{\mm}{\mbf m}
+\newcommand{\ttt}{\mbf t}
+\newcommand{\uu}{\mbf u}
+\newcommand{\vv}{\mbf v}
+\newcommand{\xx}{\mbf x}
+\newcommand{\yy}{\mbf y}
+\newcommand{\zz}{\mbf z}
+\newcommand{\bmu}{\bm{\mu}}
+
+\newcommand{\Exp}{\mathbb{E}}
+\newcommand{\rev}{^{-1}}
+\newcommand{\calD}{\mcal D}
+\newcommand{\data}{\mcal D}
+\newcommand{\cat}{\mcal C}
+\newcommand{\trans}{^{\mrm T}}
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -68,15 +105,6 @@
 \newcommand{\Hy}{\mcal{H}_{\mcal{Y}}}
 \newcommand{\Hx}{\mcal{H}_{\mcal{X}}}
 \newcommand{\HK}{\mcal{H}_{K}}
-\newcommand{\HH}{\mcal{H}}
-\newcommand{\XX}{\mcal{X}}
-\newcommand{\YY}{\mcal{Y}}
-\newcommand{\ZZ}{\mcal{Z}}
-\newcommand{\BB}{\mcal{B}}
-\newcommand{\zz}{\mbf{z}}
-\newcommand{\xx}{\mbf{x}}
-\newcommand{\yy}{\mbf{y}}
-\newcommand{\CC}{\mcal{C}}
 \newcommand{\hC}{\widehat{\mcal{C}}}
 \def\eg{\emph{e.g}\onedot}
 \def\Eg{\emph{E.g}\onedot}
@@ -520,7 +548,7 @@ to have little influence on the posterior distribution, we seek a form of prior 
 
 
 
-\section{Laplace Approximation}
+\section{Laplace Approximation}\label{Laplace Appro}
 In this chapter, we mainly want to solve the problem that when the posterior distribution is no longer Gaussian, how can we integrate exactly over the parameter vector.\newline
 So Laplace approximation can help us to transform a non-Gaussian distribution  into a Gaussian distribution.
 \section{Hessian Matrix}
@@ -535,7 +563,7 @@ $$y(x, \textbf{w}) = w_0+w_1x+w_2x^2+\dots+w_Mx^M=\sum_{j=0}^Mw_jx^j$$
 This is a \textbf{linear} function of coefficients \textbf{w}  !! So this is linear.\newline
 Goal is to minimize:
 $$E(\textbf{w}) = \frac12\sum_{n=1}^N\{y(x_n,\textbf{w})-t_n\}^2$$
-\emph{This is a quadratic function of w so its derivatives with respect to coefficients will be linear so the minimization of the error function has a unique solution.}
+This is a quadratic function of $\ww$ so its derivatives with respect to coefficients will be linear so the minimization of the error function has a unique solution.
 \subsection{the influence of order M}
 define error by root-mean-square:
 \begin{equation}\label{2.3}
@@ -545,20 +573,16 @@ too small: not enough.\newline
 too large: \textbf{overfitting} and large coefficients, very sensitive to \textbf{noise}! low training error while large testing error.
 \subsection{the influence of size of training set}
 increasing the size of the data set reduces the over-fitting priblem.\newline
-\textunderscore{\emph{comment}: this is obvious because the when the size of data set gets larger, the order will become smaller relatively. the requirement for over-fitting is larger order. but when we choose the complexity of our model, we can not depend on the size of data set, we must choose more robust model for \textbf{specific problem}.}
+\textit{comment}: this is obvious because the when the size of data set gets larger, the order will become smaller relatively. the requirement for over-fitting is larger order. but when we choose the complexity of our model, we can not depend on the size of data set, we must choose more robust model for \textbf{specific problem}.
 \subsection{modifying error function to solve overfitting}
 \begin{equation}\label{2.4}
 \tilde{E}(\textbf{w}) = \frac12\sum_{n=1}^M\{y(x_n,\textbf{w})-t_n\}^2+\frac{\lambda}{2}||\textbf{w}||^2
 \end{equation}
-\emph{regularizier} $$||\textbf{w}||^2 = w_0^2+\dots+w_M^2$$
-\emph{somtimes $w_0$ is omitted to exclude the effect of origin for the tarfet variable !!}
-in nerual networks, this approach is known as \emph{weight decay}
-To optimize $M$ and $\lambda$, we sometimes divide dataset into \emph{training} and \emph{validation} but this is a waste, so we need more sophisticated approaches.
-
-
-
-
-
+\textit{regularizier} $$||\textbf{w}||^2 = w_0^2+\dots+w_M^2$$
+\textit
+{somtimes $w_0$ is omitted to exclude the effect of origin for the tarfet variable !!}
+in nerual networks, this approach is known as \textit{weight decay}
+To optimize $M$ and $\lambda$, we sometimes divide dataset into \textit{training} and \textit{validation} but this is a waste, so we need more sophisticated approaches.
 
 \section{Linear Models for Regression}
 \subsection{Linear Basis Function Models}
@@ -588,21 +612,23 @@ use maximum likelihood to determine $\mathrm w$ and $\beta$, we get
   \nabla \ln p(\mathrm t|\mathrm w,\beta) = \sum_{n=1}^N\{t_n-\mathrm w^T\phi(\mathrm x_n)\}\phi(\mathrm x_n)^T = 0
 \end{equation}
 and we obtain
-$$\mathrm w_{ML} = (\Phi^T\Phi)^{-1}\Phi^T\mathrm t$$
-here $\Phi$ is an $N\times M$ matrix called the \emph{design matrix}, and $\Phi_{nj} = \phi_j(\mathrm x_n)$
-\uline{so each row of $\Phi$ is dependent on the same observation and each column is dependent on the same basis function.} \newline
-$\Phi^{\dagger} = (\Phi^T\Phi)^{-1}\Phi^T$ is known as the *Moore-Penrose pseudo-inverse* of the matrix.\newline
+\begin{equation}\label{}
+  \mathrm w_{ML} = (\Phi^T\Phi)^{-1}\Phi^T\mathrm t
+\end{equation}
+here $\Phi$ is an $N\times M$ matrix called the \textit{design matrix}, and $\Phi_{nj} = \phi_j(\mathrm x_n)$
+so each row of $\Phi$ is dependent on the same observation and each column is dependent on the same basis function. \newline
+$\Phi^{\dagger} = (\Phi^T\Phi)^{-1}\Phi^T$ is known as the \textit{Moore-Penrose pseudo-inverse} of the matrix.\newline
 For $w_0$, we can see $w_0=\bar t-\sum_{j=1}^{M-1}w_j\bar \phi_j$, where $\bar t=\frac1N\sum_{n=1}^Nt_n, \bar{\phi_j}=\frac1N\sum_{n=1}^N\phi_j(\mathrm x_n)$. So the bias $w_0$ compensates for the different between the averages of the target values and the weighted sum of the averages of the basis function values. Also we can get$1/\beta_{ML}=\frac1N\sum_{n=1}^N\{t_n-\mathrm w_{ML}^T\phi(\mathrm x_n)\}^2$
 \subsubsection{Geometry of least squares}
 $\mathrm t=(t_1,\dots,t_N)^T$ is a vector in N-dimensional space. Define $\mathrm y$ to be an N-dimensional vector whose $n^{th}$ element is given by $y(\mathrm x_n,\mathrm w)$,  so $\mathrm y$ is an arbitrary linear combination of the vectors $\varphi_j$, it can live anywhere in the M-dimensional subspace.\newline
 Thus the least-squares solution for $\mathrm  w $ corresponds to that choice of $\mathrm y$ that lies in subspace $S$ and that is closest to t. so we choose the orthogonal projection of $\mathrm t$  onto the subspace.\newline
 some problems: singularity of $\Phi^T\Phi$
 \subsubsection{Sequential learning}
-SGD (\emph{stochastic gradient descent}, aka, \emph{sequential gradient descent})\newline
+SGD (\textit{stochastic gradient descent}, aka, \textit{sequential gradient descent})\newline
 $$\mathrm w^{(\tau+1)}=\mathrm w^{(\tau)}-\eta\nabla E_n$$
 So for the case of the sum-of-squares erroe function, this gives
 $$\mathrm w^{\tau+1}=\mathrm w^{(\tau)}+\eta(t_n-\mathrm w^{(\tau)^T}\phi_n)\phi_n$$ where $\phi_n=\phi(\mathrm x_n)=(\phi_1(\mathrm x_n), \dots, \phi_M(\mathrm x_n))^T$
-\emph{least-mean-squares} algorithm (\emph{LMS})
+\textit{least-mean-squares} algorithm (\textit{LMS})
 \subsubsection{Regularized least squares}
 Total error function to be minimized takes the from :
 $E_D(\mathrm w) +\lambda E_W(\mathrm w)$ Usually, $E_W(\mathrm w) = \frac12\mathrm w^T\mathrm w$ And we can obtain $\mathrm w=(\lambda\mathrm I+\Phi^T\Phi)^{-1}\Phi^T\mathrm t$ by setting the gradient of total error function with respect to $\mathrm w$ to zero.
@@ -620,11 +646,49 @@ If we have $N$ observations, $\mathrm t_1,\dots,\mathrm t_N$, into one matrix $\
 and we can get $\mathrm W_{ML} = (\Phi^T\Phi)^{-1}\Phi^T\mathrm T$, $\mathrm w_k = (\Phi^T\Phi)^{-1}\Phi^T\mathrm t_k$
 
 \subsection{The Bias-Variance Decomposition}
-don't quite understand:\newline
-\uline{distinguishing between the squared loss function arising from decision theory and the sum-of-squares error function that arose in the maximum likelihood estimation of model parameter.}
-denote $h(\mathrm x) = \mathrm E[t|\mathrm x] = \int tp(t|\mathrm x)\mathrm dt$. If we have unlimited data set $\mathcal D$, how can be get $h(\mathrm x)$?
+Recall Section1.5.5 in PRML, which gave us the expected loss in regression problem:
+\begin{equation}\label{}
+\mathbb{E}[L]=\iint L(t,y(\xx))p(\xx,t)\mrm d\xx\mrm dt
+\end{equation}
+To minimize $\mathbb E[L]$ we set
+\begin{equation}\label{}
+  y(\xx) = \mathbb E_t[t|\xx]
+\end{equation}
+then we can rewrite the loss function:
+\begin{gather}\label{}
+L =  \{y(\xx)-t\}^2 = \{y(\xx) - \mathbb E[t|\xx] + \mathbb E[t|\xx] -t\}^2 \\
+  =\{y(\xx)-\Exp[t|\xx]\}^2+2\{y(\xx)-\Exp[t|\xx]\}\{\Exp[t|\xx]-t\}+\{\Exp[t|\xx]-t\}^2
+\end{gather}
+Then, the expected loss is:
+\begin{equation}\label{}
+\Exp[L] = \int\{y(\xx)-\Exp[t|\xx]\}^2p(\xx)\mrm d\xx+\iint \{\Exp[t|\xx]-t\}^2p(\xx)\mrm d\xx\mrm dt.
+\end{equation}
+Denote $h(\xx) = \Exp[t|\xx]$, the second term is independent of $y(\xx)$, and arises from the intrinsic noise on the data. So we can only minimize the first term. And this term is nonnegative and if we get $h(\xx)$, we can set $y(\xx) = h(\xx)$ and we'll get a minimal loss. But because of limited training data points and limited computational sources, we can never get exact $h(\xx)$, and we want to learn an optimal $y(\xx)$ from the training data.
 
-\subsection{ Bayesian Linear Regression}
+Now suppose we have a number of data sets of the same size $N$ and each drawn independently from the true distribution $p(\xx,t)$. For each data set, we can get a regression function $y(\xx;\mathcal D)$, and for each particular data set, the first term takes the form as:
+\begin{equation}\label{}
+  \{y(\xx;\calD)-h(\xx)\}^2
+\end{equation}
+And we denote the expectation of the function value over all the data sets as $ \Exp_{\calD}[y(\xx;\cal D)]$, then
+\begin{gather}\label{}
+  \{y(\xx;\calD)-h(\xx)\}^2 = \{y(\xx;\calD)-\Exp_{\calD}[y(\xx;\calD]+\Exp_{\calD}[y(\xx;\calD]-h(\xx)\}^2 \\
+\end{gather}
+So,
+\begin{gather}\label{}
+  \Exp_\calD[\{y(\xx;\calD)-h(\xx)\}^2] \\
+  = \{\Exp_\calD[y(\xx;\calD)-h(\xx)\}^2 +\Exp_\calD[\{y(\xx;\calD)-\Exp_\calD[y(\xx;\calD]\}^2]
+\end{gather}
+The first term, called squared \textit{bias} represents the extent to which the average prediction over all data sets differ from the desired regression function. The second term, called the \textit{variance}, measures the extent to which the solutions for individual data sets vary around their average, and hence it measures the extent to which the function $y(\xx;\calD$ is sensitive to the choice of data set.
+
+To sum up, the expected squared loss is:
+\begin{equation}\label{}
+  \mrm{expected loss} = (\mrm{bias})^2+\mrm{variance}+\mrm{noise}.
+\end{equation}
+There is a trade-off between bias and variance.  If a model is very flexible, it will lead to very low bias while high variance, and if a model is very rigid, it will lead to very low variance while high bias.
+
+\textit{There is an example in PRML section3.2 illustrating the trade-off between bias and variance.}
+
+\subsection{Bayesian Linear Regression}
 Because effective model complexity, governed by the number of basis functions, needs to be controlled according to the size of the data set, the issue of deciding the appropriate model complexity for the particular problem which cannot be decided simply maximizing the likelihood function still exists. So we turn to Bayesian treatment of linear regression and we can avoid the over-fitting problem and also lead to automatic methods of determining model complexity using the training data alone.
 \subsubsection{Parameter distribution}
 we assume that precision parameter $\beta$ is known and the prior  probability distribution is as the form:
@@ -638,7 +702,7 @@ so the posterior probability will be Gaussian, too
 where $\mathrm m_N=\mathrm S_N(\mathrm S_0^{-1}\mathrm m_0+\beta \Phi^T\mathrm t)$ and $\mathrm S_N^{-1}=\mathrm S_0^{-1}+\beta\Phi^T\Phi$\newline
 To simplify the model we assume $\mathrm S_0 = \alpha^{-1}\mathrm I$ and $ \mathrm m_0=\mathrm 0$. Then, maximization of this posterior distribution with respect to $\mathrm w$ is therefore equivalent to minimization of the sum-of-square error function with the addition of a quadratic regularization term.
 \subsubsection{Predictive distribution }
-In practice, we only want to predict t for new values of $\mathrm x$ rather than $\mathrm w$. So we evaluate the \emph{predictive distribution} defined by
+In practice, we only want to predict t for new values of $\mathrm x$ rather than $\mathrm w$. So we evaluate the \textit{predictive distribution} defined by
 \begin{equation}\label{eq2.2.6}
   p(t|\mathrm t,\alpha,\beta) = \int p(t|\mathrm w,\beta)p(\mathrm w|\mathrm t,\alpha,\beta)\mathrm {dw}
 \end{equation}
@@ -652,12 +716,66 @@ Consider the problem of model selection from a Bayesian perspective by simply in
 Given a training seet $\mathcal D$ we wish to evaluate the posterior distribution $p(\mathcal M_i|\mathcal D) \propto p(\mathcal M_i)p(\mathcal D|\mathcal M_i)$\newline
 the prior shows our preference for different models.\newline
 If we choose $p(\mathcal M_i)$ to be identical, then the interesting term is the model evidence $p(\mathcal D|\mathcal M_i)$.\newline
-the model evidence is sometimes called \emph{marginal likelihood.}
+the model evidence is sometimes called \textit{marginal likelihood.}
 We can conclude that the Bayesian framework avoids the problem of over-fitting  and allows models to be compared on the basis of the training data alone. However, we still needs to make assumptions about the form of the model.
 \subsection{The Evidence Approximation}
+If we introduce hyperpriors over $\alpha$ and $\beta$, the predictive distribution is obtained by marginalizing over $\ww$, $\alpha$ and $\beta$:
+\begin{equation}\label{}
+  p(t|\ttt)=\iiint p(t|\ww,\beta)p(\ww|\ttt,\beta)p(\alpha,\beta|\ttt)\mrm d\ww\mrm d\alpha\mrm d\beta.
+\end{equation}
+We omitted the input variable $\xx$ to keep the notation uncluttered. This integration can not be analytically computed so we use approximation in which we set the hyperparameters to specific values determined by maximizing the marginal likelihood function obtained by first integrating over $\ww$. This frame work is known in the statistics literature as \textit{empirical Bayes} or \textit{type 2 maximum likelihood} or \textit{generalized maximum likelihood}, and in machine learning literature is also called \textit{evidence approximation}.
+
+The marginal likelihood function $p(\ttt|\alpha,\beta)$ is obtained by integrating over weight parameters $\ww$, so that
+\begin{equation}\label{}
+  p(\ttt,\alpha,\beta) = \int p(\ttt|\ww,\beta)p(\ww|\alpha)\mrm d\ww.
+\end{equation}
+Using conditional distribution in linear-Gaussian model, we finally can write the log of marginal likelohood in the form
+\begin{equation}\label{eq2.2.8}
+  \ln p(\ttt|\alpha, \beta) = \frac M2\ln \alpha +\frac N2\ln\beta-E(\mbf m_N)-\frac12\ln|\mbf A|-\frac N2\ln(2\pi)
+\end{equation}
+in which
+\begin{gather}\label{eq2.2.7}
+  E(\mbf m_N) = \frac{\beta}{2}\|\ttt-\Phi\mbf m_N\|^2+\frac\alpha2\mbf m_N^\mrm T\mbf m_N \\
+  \mbf A=\nabla\nabla E(\ww) \\
+  \mbf m_N=\beta \mbf A\rev \Phi \trans\ttt.
+\end{gather}
+\subsubsection*{Maximizing the evidence function}
+First consider maximization of $p(\ttt|\alpha, \beta)$ w.r.t $\alpha$. From eq.\ref{eq2.2.7}, assume
+\begin{equation}\label{}
+  (\beta\Phi\trans\Phi)\uu_i=\lambda_i\uu_i
+\end{equation}
+then $\mbf A$ has eigenvalues $\alpha +\lambda_i$.
+\begin{equation}\label{}
+  \frac{\ud}{\ud \alpha}\ln|\mbf A|=\frac{\ud}{\ud\alpha}\ln\prod_{i}(\lambda_i+\alpha)=\frac{\ud}{\ud\alpha}\sum_i\ln(\lambda_i+\alpha)=\sum_i\frac1{\lambda_i+\alpha}
+\end{equation}
+So the stationary points of eq.\ref{eq2.2.8} w.r.t. $\alpha$ satisfy:
+\begin{equation}\label{}
+  0=\frac{M}{2\alpha}-\frac12\mm_N\trans\mm_N-\frac12\sum_i\frac1{\lambda_i+\alpha}.
+\end{equation}
+So
+\begin{gather}\label{}
+  \alpha\mm_N\trans\mm_N=M-\alpha\sum_i\frac1{\lambda_i+\alpha}=\gamma.\\
+  \gamma = \sum_{i}\frac{\lambda_i}{\alpha+\lambda_i}
+\end{gather}
+and
+\begin{equation}\label{}
+  \alpha = \frac{\gamma}{\mm_N\trans\mm}
+\end{equation}
+Note that this is an implicit solution for $\alpha$ since $\gamma$ and $\mm_N$ are both dependent of $\alpha$.  And we can compute $
+alpha$ by lots of iterations until convergence of $\alpha$, $\gamma$ and $\mm_N$.
+
+Then we can similarly maximize the log likelihood function w.r.t $\beta$. Notice that the eigenvalues $\lambda_i$ is defined proportional to $\beta$, and hence $\ud\lambda_i/\ud\beta=\lambda_i/\beta$, so
+\begin{equation}\label{}
+  \frac{\ud}{\ud \beta}\ln|\mbf A|=\frac{\ud}{\ud\beta}\sum_i\ln(\lambda_i+\alpha)=\frac{1}{\beta}\sum_i\frac{\lambda_i}{\lambda_i+\alpha}=\frac{\gamma}{\beta}
+\end{equation}
+finally
+\begin{equation}\label{}
+    \frac{1}{\beta} = \frac{1}{N-\gamma}\sum_{n=1}^{N}\{t_n-\mm_N\trans\phi(\xx_n)\}^2.
+\end{equation}
+This is also an implicit solution for $\beta$.
+
 \subsection{Limitations of Fixed Basis Functions}
 basis function $\phi_j(\mathrm x)$ are fixed before the training data set is observed.\newline
-
 curse of dimensionality
 
 
@@ -674,10 +792,20 @@ Three approaches:
         \item generative approach. model the class-conditional densities given by $p(\mathrm x|\mathcal C_k)$, together with the prior probabilities $p(\mathcal C_k)$
       \end{itemize}
 \end{itemize}
-No longer linear in the parameters due to the presence of the nonlinear activation function.
+
+For classification problem, we consider to generalize a linear model by transform the linear function of $\ww$ using a nonlinear  function $f(\cdot)$ so that
+\begin{equation}\label{}
+  y(\xx) = f(\ww\trans\xx+w_0)
+\end{equation}
+In the machine learning literature $f(\cdot)$ is known as \textit{activation function}, whereas its inverse is called a \textit{link function} in statistics literature. So the model is no longer linear in the parameters due to the presence of the nonlinear activation function.
 \subsection{Discriminant Functions}
-$$y(\mathrm x) = \mathrm w^T\mathrm x+w_0$$
-and the decision surface is given by $\frac{\mathrm w^T\mathrm x}{||\mathrm w||} = -\frac{w_0}{||\mathrm w||}$
+\begin{equation}\label{}
+y(\xx) = \ww^T\xx+w_0
+\end{equation}
+For two-class situation,  the normal distance from the origin to the decision surface is given by is given by
+\begin{equation}\label{}
+  \frac{ \ww^T\xx}{||\ww||} = -\frac{w_0}{||\ww||}
+\end{equation}
 for multiple classes,  it's kind of difficult to reduce to 2-class. a single $K$-class discriminant comprising $K$ linear functions of the form:
 $y_k(\mathrm x) = \mathrm w_k^T\mathrm x+w_{k0}$ and then assigning a point $\mathrm x$ to class $\mathcal C_k$ if $y_k(\mathrm x)$ is the largest.\newline
 approaches to learning the discriminant functions:
@@ -686,36 +814,271 @@ approaches to learning the discriminant functions:
   \item fisher's linear discriminant
   \item perceptron algorithm
 \end{itemize}
-\subsection{Probabilistic Generative Models}
-logistic sigmoid function and softmax function\newline
-assume the class-conditional densities are Gaussian. assume the same covariance matrix.
-\begin{equation}\label{2.3.1}
-  p(\mathrm x|\mathcal C_k) = \frac{1}{(2\pi)^{D/2}}\frac{1}{|\Sigma|^{1/2}}\exp\{-\frac12(\mathrm x-\mu_k)^T\Sigma^{-1}(\mathrm x-\mu_k)\}
+\subsubsection*{Least squares for classification}
+We have $K$ classes and each class $\cal C_k$ is described by its own linear model so that
+\begin{equation}\label{}
+  y_k(\xx)=\ww_k\trans\xx+w_{k0}.
 \end{equation}
-for two-class case $p(\mathcal C_1|\mathrm x) = \sigma(\mathrm w^T\mathrm x+w_0)$\newline
-where $\mathrm w = \Sigma^{-1}(\mu_1-\mu_2)$, $w_0 = -\frac12\mu_1^T\Sigma^{-1}\mu_1+\frac12\mu_2^T\Sigma^{-1}\mu_2+\ln\frac{p(\mathcal C_1)}{p(\mathcal C_2)}$\newline
-for K classes we have  $a_k(\mathrm x) \mathrm w_k^T\mathrm x+w_{k0}$ where $ \mathrm w_k = \Sigma^{-1}\mu_k, w_{k0} = -\frac12\mu_k^T\Sigma^{-1}\mu_k+\ln p(\mathcal C_k)$
-\newline
-Then, we can determine the vlaues of the parameters, together with the prior class probabilities $p(\mathcal C_k)$, using maximum likelihood.\newline
-\textbf{for 2-class case}\newline
-we finally get $\pi = \frac{N_1}{N_1+N_2}$ and $\mu_1 = \frac1{N_1}\sum_{n=1}^Nt_n\mathrm x_n$ , $\mu_2 =\frac1{N_2} \sum_{n=1}^N(1-t_n)\mathrm x_n$, \newline
-and $\Sigma =\frac{N_1}{N}S_1+\frac{N_2}{N}S_2, S_1 = \frac{1}{N_1}\sum_{n\in\mathcal C_1}(\mathrm x_n-\mu_1)(\mathrm x_n-\mu_1)^T$
-\subsection{Probabilisitc  Discriminative Models}
-an alternative approach is to use the functional form of the generalized linear model explicitly and to determine its parameters directly by using maximum likelihood. and there is an algorithm IRLS, iterative reweighted least squares
+Using vector notation we can rewrite it in the form of:
+\begin{equation}\label{}
+  \yy(\xx)=\tilde{\WW}\trans\tilde{\xx}
+\end{equation}
+where $\tilde{\WW}$ is a matrix whose $k^{\mrm{th}}$ column comprises the $D+1$-dimensional vector $\tilde{\ww}_k=(w_{k0}, \ww_k\trans)\trans$ and $\tilde{\xx}$ is the corresponding augmented input vector $(1,\xx\trans)\trans$. A new input $\xx$ is then assigned to the class for which the output $y_k=\tilde{\ww}\trans\tilde{\xx}$ is the largest.
+
+We now determine $\tilde{\WW}$  by minimizing a sum-of-square error function:
+\begin{equation}\label{}
+  E_D(\tilde{\WW})=\frac12\mrm{Tr}\{(\tilde{\XX}\tilde{\WW}-\TT)\trans(\tilde{\XX}\tilde{\WW}-\TT)\}
+\end{equation}
+where $\TT$ is defined as a matrix whose $n^{\mrm{th}}$ row is the vector $\ttt_n\trans$ and $\tilde{\XX}$ is a matrix whose $n^{\mrm{th}}$ row is $\tilde{\xx}_n\trans$. We then obtain the solution for optimal $\tilde{\WW}$ in the form
+\begin{equation}\label{}
+  \tilde{\WW}=(\tilde{\XX}\trans\tilde{\XX})\rev\tilde{\XX}\trans\TT=\tilde{\XX}^\dagger\TT
+\end{equation}
+
+Least square model fails obviously because when we recall that it correspond to maximum likelihood under the assumption of a Gaussian conditional distribution, whereas binary target vectors clearly have a distribution that is far from Gaussian.
+\subsubsection*{Fisher's linear discriminant}
+Here we consider classification problem in the view of dimension reduction.
+
+Consider two-class problem first, we can select a projection that maximizes the class separation. Assume there are $N_1$ points in class $\mcal C_1$ and $N_2$ points in class $\mcal C_2$, define mean vectors:
+\begin{equation}\label{}
+  \mm_1=\frac1{N_1}\sum_{n\in\mcal C_1}\xx_n, \ \ \mm_2 = \frac{1}{N_2}\sum_{n\in\mcal C_2}\xx_n.
+\end{equation}
+So projection class means will be:
+\begin{equation}\label{}
+  m_k=\ww\trans\mm_k,\ k=1,2
+\end{equation}
+and we want to maximize
+\begin{equation}\label{}
+  m_2-m_1=\ww\trans(\mm_2-\mm_1).
+\end{equation}
+This can be arbitrarily large simply by increasing the magnitude of $\ww$. So we add a constraint $\sum_iw_i^2=1$, and then using Lagrange multiplier we obtain $\ww\propto(\mm_2-\mm_1)$. But this approach is not robust because some well separated samples in original two-dimensional space could overlapping after projected onto the vector $\mm_2-\mm_1$. So Fisher's linear discriminant want to solve this problem.
+
+The idea proposed by Fisher is to maximize a function that will give a large separation between the projected class means while also giving a small variance within each class, thereby minimize the class overlap. We define
+\begin{equation}\label{}
+  s_k^2=\sum_{n\in\mcal C_k}(y_n-m_k)^2
+\end{equation}
+which is the within class $\mcal C_k$ variance, where $y_n=\ww\trans\xx_n$. And \textit{Fisher criterion} is defined by
+\begin{equation}\label{}
+  J(\ww) = \frac{(m_2-m_1)^2}{s_1^2+s_2^2} = \frac{\ww\trans\mbf S_\mB\ww}{\ww\trans\mbf S_\mW\ww}
+\end{equation}
+where $\mbf S_\mB$ is the \textit{between-class} covariance matrix
+\begin{equation}\label{}
+  \mbf S_\mB = (\mm_2-\mm_1)(\mm_2-\mm_1)\trans
+\end{equation}
+and $\mbf S_\mW$ is the \textit{within-class} covariance matrix
+\begin{equation}\label{}
+  \mbf S_\mW = \sum_{n\in\mcal C_1}(\xx_n-\mm_1)(\xx_n-\mm_1)\trans+\sum_{n\in\mcal C_2}(\xx_n-\mm_2)(\xx_n-\mm_2)\trans.
+\end{equation}
+We find that $J$ is maximized when
+\begin{equation}\label{}
+  (\ww\trans\mbf S_\mB\ww)\mbf S_\mW\ww=(\ww\trans\mbf S_\mW\ww)\mbf S_\mB\ww.
+\end{equation}
+Since do not care about the magnitude of $\ww$, we obtain
+\begin{equation}\label{}
+  \ww\propto\mbf S_\mW\rev(\mm_2-\mm_1).
+\end{equation}
+
+Now we consider the relation between Fisher's discriminant and least squares. If we adopt a slightly different (in contrast to 1-of-K coding)target encoding scheme, then the least-squares solution for the weights becomes equivalent to the Fisher solution. More details can be found in section4.1.5 of \textit{PRML}.
+
+As for K-classes situation, the solution is similar to 2-classes situation and more details can be found in section4.1.6 of \textit{PRML}.
+
+
+\subsubsection*{The perceptron algorithm}
+We choose the nonlinear activation function $f(\cdot)$ to be a step function of the form
+\begin{equation}\label{}
+  f(a) = \left\{
+  \begin{array}{c}
+    +1,\ a\geq 0 \\
+    -1,\  a<0.
+  \end{array}
+  \right .
+\end{equation}
+
+The algorithm used to determine the parameters $\ww$ of the perceptron can most easily be motivated by error function minimization. A natural choice for error function is the total number of misclassified patterns. However this error function is discontinuous at some points while the gradient is zero all everywhere.
+
+We therefore consider an alternative error function as \textit{perceptron criterion}. For right predicted input, we have
+\begin{equation}\label{}
+  \ww\trans\phi(\xx_n)t_n > 0.
+\end{equation}
+The perceptron criterion is therefore given by
+\begin{equation}\label{}
+  E_p(\ww)=-\sum_{n\in mcal M}\ww\trans\phi_nt_n
+\end{equation}
+where $\mcal M$ denotes the set of all misclassified patterns. Then the change in the weight vector $\ww$ is given by
+\begin{equation}\label{}
+  \ww^{(\tau+1)}=\ww^{(\tau)} - \eta\nabla E_p(\ww)=\ww^{(\tau)}+\eta\phi_nt_n.
+\end{equation}
+
+\subsection{Probabilistic Generative Models}
+Here we shall adopt a generative approach in which we model the class-conditional densities $p(\xx|\mcal C_k)$, as well as the class prior $p(\mcal C_k$, and then we want to compute posterior $p(\mcal C_k|\xx)$.
+
+Consider 2-classes case first, we have
+\begin{equation}\label{}
+  p(\mcal C_1|\xx) = \frac{p(\xx|\mcal C_1)p(\mcal C_1)}{p(\xx|\mcal C_1)p(\mcal C_1)+p(\xx|\mcal C_2)p(\mcal C_2)}.
+\end{equation}
+Then we define
+\begin{equation}\label{}
+  a = \ln\frac{p(\xx|\mcal C_1)p(\mcal C_1)}{(\xx|\mcal C_2)p(\mcal C_2)}
+\end{equation}
+so
+\begin{equation}\label{eq2.3.1}
+  p(\mcal C_1|\xx) = \frac{1}{1+\exp(-a)}=\sigma(a).
+\end{equation}
+And we call $\sigma(a) = \frac{1}{1+\exp(a)}$ \textit{logistic sigmoid} function. The inverse of the sigmoid function is given by
+\begin{equation}\label{}
+  a = \ln(\frac{\sigma}{1-\sigma})
+\end{equation}
+and is known as the \textit{logit} function. It represents the log of the ratio of probabilities $\ln [p(\mcal C_1|\xx)/p(\mcal C_2|\xx)]$ for the two classes, also known as the \textit{log odds}.
+
+Given eq.\ref{eq2.3.1}, we shall shortly consider situations in which $a(\xx)$ is a linear function of $\xx$, in which case the posterior probability is governed by a generalized linear model.
+
+For $K>2$ classes, we have
+\begin{equation}\label{}
+  p(\mcal C_k|\xx)=\frac{p(\xx|\mcal C_k)p(\mcal C_k)}{\sum_jp(\xx|\mcal C_j)p(\mcal C_j}=\frac{\exp(a_k)}{\sum_j\exp(a_j)}
+\end{equation}
+where $a_k$ is defined by
+\begin{equation}\label{eq2.3.2}
+  a_k = \ln p(\xx|\mcal C_k)p(\mcal C_k).
+\end{equation}
+The normalized exponential is also known as the \textit{softmax function}.
+
+Then, we'll investigate the consequences of choosing specific forms for the class-conditional densities, looking first at continuous input variables $\xx$ and then discussing briefly the case of discrete inputs.
+
+For continuous input, let us assume that the class-conditional densities are Gaussian and firstly assume that all classes share the same covariance matrix.
+\begin{equation}\label{}
+  p(\xx|\cat_k)=\frac{1}{(2\pi)^{D/2})}\frac1{|\Sigma|^{1/2}}\exp\{-\frac12(\xx-\bmu_k)\trans\Sigma\rev(\xx-\bmu_k)\}
+\end{equation}
+
+Then for case of two classes, we have
+\begin{equation}\label{}
+  p(\mcal C_1|\xx)= \sigma(\ww\trans\xx+w_0)
+\end{equation}
+where
+\begin{gather}\label{}
+  \ww = \Sigma\rev(\bmu_1-\bmu_2) \\
+  w_0 = -\frac12\bmu_2\trans\Sigma\rev\bmu_1+\frac{1}{2}\bmu_2\trans\Sigma\rev\bmu_2+\ln\frac{p(\mcal C_1)}{p(\mcal C_2)}.
+\end{gather}
+Because we have assumption of common covariance matrices, so we have cancelled the quadratic terms from Gaussian densities. And the prior $p(\mcal C_k)$ only appears in the bias so when it is changed, the decision boundary will only make parallel shifts. If we relax the assumption of a shared covariance matrix and allow each class conditional density $p(\xx|\mcal C_k)$ to have its own $\Sigma_k$, then we will obtain quadratic functions of $\xx$, giving rise to a \textit{quadratic discriminant}.
+
+\subsubsection*{Maximum Likelihood solution}
+We have data set $\{\xx_n, t_n\}, n = 1,2,\dots,N$, where $t_n=1$ denotes class $\mcal C_1$ and $t_n =0$ denotes $\mcal C_2$. And  we have prior class probability $p(\cat_1)=\pi$ and $p(\cat_2) = 1-\pi$, then
+\begin{gather}\label{}
+  p(\xx_n,\cat_1) = p(\cat_1)p(\xx_n|\cat_1) = \pi\normD(\xx_n|\bmu_1,\Sigma)
+  \\
+  p(\xx_n,\cat_2) = p(\cat_2)p(\xx_n|\cat_2) = (1-\pi)\normD(\xx_n|\bmu_2,\Sigma)
+\end{gather}
+So the likelihood function is given by
+\begin{equation}\label{}
+  p(\ttt|\pi, \bmu_1,\bmu_2,\Sigma) = \prod_{n=1}^{N}[\pi\normD(\xx_n|\bmu_1,\Sigma)]^{t_n}[(1-\pi)\normD(\xx_n|\bmu_2,\Sigma)]^{1-t_n}
+\end{equation}
+where $\ttt = (t_1,\dots,t_N)\trans$.
+
+By maximizing the log of likelihood, w.r.t $\pi$ we obtain
+\begin{equation}\label{}
+  \pi=\frac{N_1}{N_1+N_2}
+\end{equation}
+where $N_1$ denotes the total number of data points in class $\cat_1$ and so as $N_2$.
+
+Then we pick out of the log likelihood function those terms that depend on $\bmu_1$ giving
+\begin{equation}\label{}
+  \sum_{n=1}^{N}t_n\ln \normD(\xx_n|\bmu_1,\Sigma) = -\frac{1}{2}\sum_{n=1}^{N}t_n(\xx_n-\bmu_1)\trans\Sigma\rev(\xx_n-\bmu_1) + \mrm{const}.
+\end{equation}
+Setting the derivative w.r.t $\bmu_1$ to zero and we obtain
+\begin{equation}\label{}
+  \bmu_1=\frac1{N_1}\sum_{n=1}^{N}t_n\xx_n
+\end{equation}
+which is simply the mean of all the input vectors $\xx_n$ assigned to class $\cat_1$. Similarly,
+\begin{equation}\label{}
+  \bmu_2 = \frac{1}{N_2}\sum_{n=1}^N(1-t_n)\xx_n.
+\end{equation}
+
+Finally we pick out the terms in the log likelihood function that depend on $\Sigma$, we have
+\begin{equation}\label{}
+  -\frac{N}{2}\ln|\Sigma|-\frac N2\mrm{Tr}\{\Sigma\rev\mbf S\}
+\end{equation}
+where
+\begin{gather}\label{}
+  \mbf S = \frac{N_1}{N}\mbf S_1+\frac{N_2}{N}\mbf S_2 \\
+  \mbf S_1 = \frac{1}{N_1}\sum_{n\in \cat_1}(\xx_n-\bmu_1)(\xx_n-\bmu_1)\trans \\
+  \mbf S_2 = \frac{1}{N_2}\sum_{n\in \cat_2}(\xx_n-\bmu_2)(\xx_n-\bmu_2)\trans
+\end{gather}
+Using the standard result for the maximum likelihood solution for a Gaussian distribution, we see that $\Sigma = \mbf S$, which represents a weighted average of the covariance matrices associated with each of the two classes separately.
+
+This result is easily extended to $K$ classes.
+
+\subsubsection*{Discrete features}
+For simplicity, we look at binary feature values $x_i\in\{0,1\}$, and the input is $D$-dimensional. Here we make the \textit{naive Bayes} assumption in which the feature values are treated as independent, conditioned on the class $\cat_k$. Thus, we have class-conditional distribution of the form
+\begin{equation}\label{eq2.3.3}
+  p(\xx|\cat_k) = \prod_{i=1}^{D}\mu_{ki}^{x_i}(1-\ mu_{ki})^{1-x_i}.
+\end{equation}
+For each dimension of the input feature $\xx$, the value $x_i\sim \mrm{Bern}(x_i|\mu_{ki})$ where $k$ denotes the class $\cat_k$. Substituting eq.\ref{eq2.3.3} into eq.\ref{eq2.3.2} we obtain
+\begin{equation}\label{}
+  a_k(\xx) = \sum_{i=1}^{D}\{x_i\ln\mu_{ki}\}+(1-x_i)\ln(1-\mu_{ki})+\ln p(\cat_k)
+\end{equation}
+which is again linear functions of the input values $x_i$.
+
+\subsubsection*{Exponential Family}
+As we have seen, for both Gaussian distributed and discrete inputs, the posterior class probabilities are given by generalized linear models with logistic sigmoid ($K =
+2$ classes) or softmax ($K \geq 2$ classes) activation functions. These are particular cases of a more general result obtained by assuming that the class-conditional densities $p(\xx|\cat_k)$ are members of the exponential family of distributions.
+
+By assuming the distribution of $\xx$ can be written in the form
+\begin{equation}\label{}
+  p(\xx|\bm\lambda_k) = h(\xx)g(\bm\lambda_k)\exp\{\bm\lambda_k\trans\xx\}
+\end{equation}
+we can prove that for exponential family distributions, the posterior class probabilities are given by generalized linear models with logistic sigmoid ($K =
+2$ classes) or softmax ($K \geq 2$ classes) activation functions.
+
+
+\subsection{Probabilistic  Discriminative Models}
+We have discussed generative models to do classification last section, and now we have an alternative approach to do classification which is to use the functional form of the generalized linear model explicitly and to determine its parameters directly by using maximum likelihood. and there is an algorithm \textit{IRLS}, \textit{iterative reweighted least squares} to find solutions.
 \subsubsection{fixed basis functions}
-linear decision boundaries in the $\phi$ space while nonlinear in the $\mathrm x$ space.
+We first make a nonlinear transformation of the input $\xx$ using a vector of basis function $\phi(\xx)$. Linear decision boundaries in the $\phi$ space while nonlinear in the $\mathrm x$ space.
 \subsubsection{logistic regression}
-$p(\mathcal C_1|\phi) = y(\phi) = \sigma(\mathrm w^T\phi)$  and $\sigma()$ is the sigmoid funtion.  and this model is known as logistic regression.  THIS IS A MODEL FOR CLASSIFICATION RATHER THAN REGRESSION.
+The posterior probability of class $\cat_1$ can be written as a logistic sigmoid acting on a linear function of the feature vector $\phi$:
+\begin{equation}\label{}
+  p(\cat_1|\phi)=y(\phi)=\sigma(\ww\trans\phi)
+\end{equation} 
+with $p(\cat-2|\phi) = 1-p(\cat_1|\phi)$. Here $\sigma(\cdot)$ is the \textit{logistic sigmoid} function. In the termninology of statistics this model is also known as \textit{logistic regression}. 
+
+We now use maximum likelihood to determine the parameters of the logistic regression model. 
+
+For a data set $\{\phi_n,t_n\}$ where $t_n\in\{0,1\}$ and $\phi_n=\phi(\xx_n)$, with $n=1,\cdots,N$ the likelihood function can be written as 
+\begin{equation}\label{}
+  p(\ttt|\ww) = \prod_{n=1}^{N}y_n^{t_n}\{1-y_n\}^{1-t_n}
+\end{equation} 
+where $\ttt = (t_1,\dots,t_N)\trans$ and $y_n = p(\cat_1|\phi_n)$. We define an error function by taking the negative logarithm of the likelihood, which gives the \textit{cross-entropy} error function in the form
+\begin{equation}\label{}
+  E(\ww) = -\ln p(\ttt|\ww) = -\sum_{n=1}^{N}\{t_n\ln y_n+(1-t_n)\ln(1-y_n)\}
+\end{equation}
+where $y_n=\sigma(a_n)$ and $a_n=\ww\trans\phi_n$. Then
+\begin{equation}\label{}
+  \nabla E(\ww) = \sum_{n=1}^{N}(y_n-t_n)\phi_n.
+\end{equation}
+
+
 \subsubsection{Iterative reweighted least squares }
 For logistic regression, there is no longer a closed-form solution, due to the nonlinearity of the logistic sigmoid function. However, the departure from a quadratic form is not substantial. To be precise, the error function is concave, as we shall see shortly, and hence has a unique minimum.\newline
 The Newton-Raphson update for minimizing a function $E(\mathrm w)$ is
 \begin{equation}
-  \mathrm w^{(\mathrm {new})}=\mathrm w^{(\mathrm {old})}-\mathrm H^{-1}\nabla E(\mathrm w)
+   \ww^{(\mathrm {new})}=\ww^{(\mathrm {old})}-\mbf H^{-1}\nabla E(\ww)
 \end{equation}
-for logistic regression model with cross-entropy error function ( 2 classes , we see
-$$\nabla E(\mathrm w) = \sum_{n=1}^N(y_n-t_n)\phi_n = \Pi^T(\mathrm y-\mathrm t)$$
-$$\mathrm H=\nabla\nabla E(\mathrm w) = \sum_{n=1}^Ny_n(1-y_n)\phi_n\phi_n^T = \Phi^TR\Phi$$
-where $R$ is a diagonal matrix and $R_{nn} = y_n(1-y_n)$
+
+If we apply the Newton-Raphson method  to the linear regression with sum-of -squares error function in section2.2, we'll find the formula gives the exact solution in one step. 
+
+While for logistic regression model with cross-entropy error function, we see the gradient and Hessian of this error function are given by 
+\begin{gather}\label{}
+  \nabla E(\ww) = \sum_{n=1}^N(y_n-t_n)\phi_n = \Phi^T(\yy-\ttt) \\
+  \mbf H=\nabla\nabla E(\ww) = \sum_{n=1}^Ny_n(1-y_n)\phi_n\phi_n^T = \Phi\trans \mbf R\Phi
+\end{gather}
+where $R$ is a diagonal matrix and $R_{nn} = y_n(1-y_n)$. So Hessian matrix is no longer constant but depends on $\ww$ through the weighting matrix $\RR$. So we must apply the normal equations iteratively, each time using the new weight vector $\ww$ to compute a revised weighing matrix $\RR$. For this reason, the algorithm is known as $IRLS$. 
+\subsubsection*{Multiclass logistic regression}
+Extending two-class case to K-class case, more  details seen in section4.3.4 in \textit{PRML}.
+\subsubsection{Probit regression}
+
+
+
+\subsubsection*{The Laplace Approximation}
+Refer to another section in this notes: \ref{Laplace Appro}.
+ 
 \subsubsection{Bayesian Logistic Regression}
 assume the prior $p(\mathrm w) = \mathcal N(\mathrm w|\mathrm m_0,\mathrm S_0)$
 $$p(\mathrm w|\mathrm t) \propto p(\mathrm w)p(\mathrm t|\mathrm w)$$
@@ -805,7 +1168,7 @@ So, we will approximate the posterior distribution by a Gaussian, centred at a m
 \section{Kernel Methods}
 A big difference between this chapter and previous ones is that the training data points or a subset of them, are kept and used also during the prediction phase rather than are discarded and predictions for new inputs are based purely on the learned parameter vector $\mathrm w$.
 
-\emph{radial basis functions}: depend only on the magnitude of the distance  between the arguments so that $k(\mathrm x,\mathrm x') = k(||\mathrm x-\mathrm x'||)$
+\textit{radial basis functions}: depend only on the magnitude of the distance  between the arguments so that $k(\mathrm x,\mathrm x') = k(||\mathrm x-\mathrm x'||)$
 \subsection{Dual Representations}
 This section aims to obtain kernel functions naturally via reformulate linear models for regression and classification in terms of a dual representation.  And the existence of a dual representation based on the Gram matrix is a property of many linear models including the perceptron.
 \subsection{ Construction of Kernels}
@@ -829,7 +1192,7 @@ Expressing $f(\mathrm{x}$ as a linear combination of radial basis functions, one
 \end{equation}
 we can use least squares to find $\{w_n\}$
 
-Motivation for RBF:   *\emph{Nadaraya-Watson} model
+Motivation for RBF:   \textit{Nadaraya-Watson} model
 
 Drawback: Because there is one basis function associated with every data point, the corresponding model can be computationally costly to evaluate when making predictions for new data points.
 \subsubsection{ Nadaraya-Watson model}
@@ -853,16 +1216,16 @@ where $g(\mathrm x) = \int_{-\infty}^{\infty}f(\mathrm x,t)\mathrm dt$
 
 \section{Sparse Kernel}
 In this section we shall look at kernel-based algorithms that have sparse solutions, so that predictions for new inputs depend only on the kernel function evaluated at a subset of the training data points.\newline
-\emph{SVM} is a decision machine and so does not provide posterior probabilities.
+\textit{SVM} is a decision machine and so does not provide posterior probabilities.
 \textbf{property}: the  determination of the model parameters corresponds to a convex optimization problem, and so any local solution is also a global optimum.
 \subsection{Maximum Margin Classifiers}
-\emph{margin}: the smallest distance between the decision boudary and any of the samples.
+\textit{margin}: the smallest distance between the decision boudary and any of the samples.
 
 In SVM: the decision boundary is chosen to be one for which the margin is maximized.
 
 If the data set is not linearly seperable in the original space, we can project them into another feature space using basis functions $\phi()$  to make them seperable.
 
-\uline{Don't quite understand the mathematical inference in this chapter.}  maybe I can try to discuss with other students in our reading group later.
+\uline{Don't quite understand the mathematical inference in this chapter.  maybe I can try to discuss with other students in our reading group later.}
 
 More application of SVM will be focused on Multiclass SVMs, SVM for regression and overlapping classification.
 \subsection{Relevance Vector Machines}
@@ -998,7 +1361,7 @@ We can view a directed graph as a filter and all probability distribution $p(\bf
 \end{equation}
 Some factors in $\prod_k p(\bf x_k|\rm{pa}_k)$ will disappear if they are not relative to $\bf x_i$.
 \subsection{Markov Random Fields}
-A \emph{Markov random field}, also known as a \emph{Markov network} or an \emph{undirected graphical model} , has a set of nodes each of which corresponds to a variable or group of variables, as well as a set of links each of which connects a pair of nodes. The links are undirected, that is they do not carry arrows.
+A \textit{Markov random field}, also known as a \textit{Markov network} or an \textit{undirected graphical model} , has a set of nodes each of which corresponds to a variable or group of variables, as well as a set of links each of which connects a pair of nodes. The links are undirected, that is they do not carry arrows.
 \subsubsection{Conditional independence properties}
 Properties in an undirected graph is much simpler than those in a directed graph because the nodes linked in a pair is symmetric, and there is no head-to-head situation. So if all paths that connect nodes in $A$ to nodes in $B$ pass through one or more nodes in the set $C$, then all such paths are 'blocked' and so the conditional independence property hold, aka. $$A\ci B|C$$.
 \subsubsection{Factorization properties}
@@ -1009,7 +1372,7 @@ If two nodes are not linked directly, then we can obtain
 \textbf{clique}:a subset of nodes in a graph such that there exists a link between all pairs of nodes in the subset. \newline
 \textbf{maximal clique}:a clique such that it is not possible to include any
 other nodes from the graph in the set without it ceasing to be a clique.\newline
-Denote a clique by $C$ and the set of variables in that clique by $\bf x_C$. Then the joint distribution is written as a product of \emph{potential functions}
+Denote a clique by $C$ and the set of variables in that clique by $\bf x_C$. Then the joint distribution is written as a product of \textit{potential functions}
 $\phi_C(\bf x_C)$ over maximal cliques of the graph
 \begin{equation}\label{eq8.11}
   p(\bf x) = \frac{1}{Z}\prod_{C}\phi_C(\bf x_C).
@@ -1019,7 +1382,7 @@ and is given by
 \begin{equation}\label{eq8.12}
   Z=\sum_{X}\prod_{C}\phi_C(\bf x_C)
 \end{equation}
-\emph{energy function} $E(\bf x_C)$
+\textit{energy function} $E(\bf x_C)$
 \begin{equation}\label{eq8.13}
   \phi_C(\bf x_C) = \exp\{-E(\bf x_C\}
 \end{equation}
@@ -1045,17 +1408,233 @@ And we define
   \psi_{N-1,N}(x_{N-1},x_N) = p(x_N|x_{N-1})
 \end{align}
 
-
-
-
-
-
 \section{Continuous Latent Variables}
 The simplest continuous latent variable model assumes Gaussian distributions
 for both the latent and observed variables and makes use of a linear,Gaussian dependence of the observed variables on Ihe slate of the latent variables. This leads
 to a probabilistic formulation of the well-known technique of principal component
 analysis (PCA), as well as to a related model called factor analysis.
 \subsection{Principal Component Analysis}
+Two commonly used definitions of PCA:
+\begin{itemize}
+  \item the orthogonal projection of the data onto a lower dimensional linear space.
+  \item the linear projection that minimizes the average projection cost.
+\end{itemize}
+\subsubsection*{Maximum variance formulation}
+Consider a data set of observations $\{\mrm x_n\}$ and $\mrm x_n$ is a Euclidean variable with dimensionality $D$. Our goal is to project the data onto a space having dimensionality $M<D$ while maximizing the variance of the projected data.
+
+To begin with, we consider $M=1$ and we define the one-dimensional space using a $D-$dimensional vector $\mrm u_1$, which is a unit vector. So the mean of the projected data is $\mrm u_1\bar{\mrm x}$ where
+\begin{equation}\label{}
+  \bar{\mrm x}=\frac1N\sum_{n=1}^{N}\mrm x_n
+\end{equation}
+And the variance of the projected data is given by
+\begin{equation}\label{}
+  \frac1N\sum_{n=1}^{N}\{\mrm u_1^T\mrm x_n-\mrm u_1^T\bar{\mrm x}\}^2 = \mrm (u_1^TSu_1)
+\end{equation}
+where $\mrm S$ is the data covariance matrix2de defined by
+\begin{equation}\label{}
+  J(\mrm u_1) = \mrm S=\frac1N\sum_{n=1}^{N}(\mx _n-\bar{\mx})(\mx_n-\bar\mx)^T
+\end{equation}
+
+Then we maximize the $J(\mrm u_1)$ with respect to $\mrm u_1$ under the constraint $\mrm u_1^T\mrm u_1 = 1$ and we obtain
+\begin{equation}\label{}
+  \mrm S\mrm u_1=\lambda_1\mrm u_1
+\end{equation}
+which says that $\mrm u_1$ must be an eigenvector of $\mrm S$. And
+\begin{equation}\label{}
+  \mrm{u_1^TSu}=\lambda_1,
+\end{equation}
+so we will choose $\mrm u_1$ to be the eigenvector corresponding to the largest eigenvalue.
+
+\subsubsection*{Minimum-error formulation}
+Now we discuss another formulation of PCA based on projection error minimization. To do this, we introduce a complete orthogonal set of $D-$dimensional basis vectors $\{\mrm u_1\}$ that satisfies
+\begin{equation}\label{}
+  \mrm{u^T_iu_j} = \delta_{ij}.
+\end{equation}
+And each data point can be represented by a linear combination of the basis vectors
+\begin{equation}\label{}
+  \mx_n=\sum_{i=1}^{D}\alpha_{ni}\mrm u_i.
+\end{equation}
+where $\alpha_{ni} = \mx_n^Tu_j$. And if we want to reduce the dimensionality to $M<D$, we can approximate each data point $\mx_n$ by
+\begin{equation}\label{}
+  \tilde{\mx_n} = \sum_{i=1}^{M}z_{ni}\mrm u_i+\sum_{i=M+1}^{D}bi\mrm u_i
+\end{equation}
+where $z_{ni}$ depend on the particular point while $b_i$ is fixed for all points. Then we define the loss by
+\begin{equation}\label{}
+  J=\frac{1}{N}\sum_{n=1}^{N}\|\mx_n-\tilde{\mx_n}\|^2.
+\end{equation}
+Then we minimize $J$ by setting the derivatives with respect to $\{z_{nj}\}$ and $b_i$ to zero, and we obtain
+\begin{gather}\label{}
+  z_{nj} =  \mx_n^T\mrm u_j \\
+  b_j = \bar{\mx}^T\mrm u_j.
+\end{gather}
+So the distortion is
+\begin{equation}\label{}
+  \mx_n-\tilde{\mx}_n = \sum_{i=M+1}^{D}\{(\mx_n-\bar{\mx}_n)^T\mrm u_i\}\mrm u_i
+\end{equation}
+and
+\begin{equation}\label{}
+  J = \frac{1}{N}\sum_{n=1}^{N}\sum_{i=M+1}^{D}(\mx_n^T\mrm u_i - \bar{\mx}^T\mrm u_i)^2=\sum_{i=M+1}^{D}\mrm u_i^T\mrm S\mrm u_i.
+\end{equation}
+Then we need to minimize $J$ with respect to $\{\mrm u_i\}$ under constraint $\mrm u_i^T\mrm u_i = 1$ and we can obtain
+\begin{equation}\label{}
+  \mrm S\mrm u_i = \lambda_i\mrm u_i
+\end{equation}
+and
+\begin{equation}\label{}
+  J = \sum_{i=M+1}^{D}\lambda_i.
+\end{equation}
+
+\subsubsection*{Application of PCA}
+\subsubsection*{PCA for high-dimensional data}
+In some situations, $N < D$, a set of $N$ points in $D$-dimensional space defines a linear subspace whose dimensionality is at most $N-1$. So if we perform PCA we will find that at least $D-N+1$ of the eigenvalues are zero, and the time cost is very large. We can solve this problem as follows. Define $\mrm X$ to be the $N\times D$-dimensional centred data matrix, whose $n^{\mrm{th}}$ row is given by $\mx_n-\bar{\mx}^{\mrm T}$. Then $\mrm S = \frac{1}{N}\mrm{X}^T\mrm X$ and
+\begin{gather}\label{}
+  \frac{1}{N}\mrm X^T\mrm X\mrm u_i=\lambda_i\mrm u_i. \\
+  \frac{1}{N}\mrm X\mrm X^T(\mrm X\mrm u_i) = \lambda_i(\mrm X\mrm u_i) \\
+  \frac{1}{N}\mrm X\mrm X^T\mrm v_i = \lambda_i\mrm v_i
+\end{gather}
+where $\mrm v_i = \mrm X\mrm u_i$. And
+\begin{equation}\label{}
+  (\frac{1}{N}\mrm X^T\mrm X)(\mrm X^T\mrm v_i) = \lambda_i(\mrm X^T\mrm v_i),
+\end{equation}
+so $(\mrm X\mrm v_i)$ is an eigenvector of $\mrm S$ with eigenvalue $\lambda_i$.
+
+\subsection{Probabilistic PCA}
+Previously we discussed PCA based on a linear projection of the data onto a subspace of lower dimensionality than the original data space. We now show that PCA can also be expressed as the maximum likelihood solution of a probabilistic latent variable model. This reformulation of PCA has several advantages compared with the conventional PCA.\newline
+We can formulate probabilistic PCA by first introducing an explicit latent variable $\mbf z$ corresponding to the principal-component subspace. Next we define a Gaussian prior distribution $p(\mbf z)$ with a Gaussian conditional distribution $p(\mbf x|\mbf z)$.
+\begin{gather}\label{}
+  p(\mbf z) = \normD(\mbf z|\mbf{0}, \mbf I) \\
+  p(\mbf x|\mbf z) = \normD(\mbf x|\mbf W\mbf z+\mu, \sigma^2\mbf I)
+\end{gather}
+In a generative view, the $D$-dimensional observed variable $\mbf x$ is defined by a linear transformation of the $M$-dimensional latent variable $\mbf z$ plus additive Gaussian noise, so that
+\begin{equation}\label{}
+  \mbf x=\mbf W\mbf z+\mu+\epsilon
+\end{equation}
+where $\mbf z$ is an $M$-dimensional Gaussian latent variable and $\epsilon$ is a $D$-dimensional zero-mean Gaussian-distributed noise variable with covariance $\sigma^2\mbf I$. So, the reverse the mapping, from data space to latent space, will be obtained shortly using Bayes' theorem. Now we want to determine the values of $\mbf W, \mu,\sigma^2$ using maximum likelihood.
+\begin{equation}\label{}
+  p(\mbf x) = \int p(\mbf x|\mbf z)p(\mbf z)\mrm d\mbf z) = \normD(\mbf x|\mu, \mbf C),
+\end{equation}
+where
+\begin{equation}\label{}
+  \mbf C = \mbf W\mbf W^T+\sigma^2\mbf I
+\end{equation}
+Note that if we define $\tilde{\mbf W} = \mbf {WR}$ where $\mbf R$ is orthogonal, then $\tilde{\mbf W}\tilde{\mbf W}^T=\mbf{WW}^T$
+\begin{equation}\label{}
+  \mbf C^{-1} = \sigma^{-1}\mbf I-\sigma^{-2}\mbf W\mbf M^{-1}\mbf W^T,
+\end{equation}
+where $\mbf M\in \mathbb{R}^{M\times M}$ and $\mbf M=\mbf W^T\mbf W$, reducing computing cost by changing reversing $\mbf C$ to reversing $\mbf M$. \newline
+So,
+\begin{equation}\label{}
+  p(\mbf z|\mbf x) = \normD(\mbf z|\mbf M^{-1}\mbf W^T(\mbf x-\mu),\sigma^{-2}\mbf M)
+\end{equation}
+where the mean is related to $\mbf x$ while covariance is not.
+\subsubsection*{Maximum likelihood}
+Given a data set $\mbf X=\{\mbf x_n\}$, then,
+\begin{equation}\label{}
+  \ln p(\mbf X|\mu,\mbf W,\sigma^2) = \sum_{n=1}^{N}\ln p(\mbf x_n|\mbf W,\mu,\sigma^2)=-\frac{ND}{2}\ln(2\pi)-\frac{N}{2}\ln|\mbf C|-\frac{1}{2}\sum_{n=1}^{N}(\mbf x_n-\mu)^T\mbf C^{-1}(\mbf x_n-\mu)
+\end{equation}
+and we obtain
+\begin{gather}\label{PCA.1}
+  \mu_{\mrm{ML}} = \bar{\mbf x}=\frac{1}{N}\sum_{n=1}^{N}\mbf x_n \\
+  \ln p(\mbf x|\mbf W,\mu,\sigma^2) = -\frac{N}{2}\{D\ln(2\pi)+\ln|\mbf C|+\mrm{Tr}(\mbf C^{-1}\mbf S)\}
+\end{gather}
+where $\mbf S = \frac{1}{N}\sum_{n=1}^{N}(\mbf x_n-\bar{\mbf x})(\mbf x_n-\bar{\mbf x})^T$. Maximizing with respect to $\mbf W$ and $\sigma^2$, we find that all stationary points satisfy
+\begin{equation}\label{}
+  \mbf W_{\mrm{ML}} = \mbf U_M(\mbf L_M-\sigma^2\mbf I)^{1/2}\mbf R
+\end{equation}
+where $\mbf U_M\in \mathbb{R}^{D\times M}$ with columns choosing from the eigenvectors $\mbf v_i$ of $\mbf S$, $\mbf L_M$ offers the eigenvalues $\lambda_i$, and $\mbf R$ is any orthogonal matrix. And maximum is reached when we choose the most largest $M$ eigenvalues and their corresponding eigenvectors. Then corresponding value for $\sigma^2$ is
+\begin{equation}\label{}
+  \sigma^2_{\mrm{ML}} = \frac{1}{D-M}\sum_{i=M+1}^{D}\lambda_i
+\end{equation}
+which is unchanged by rotation in the latent variable. \newline
+For $\mbf C=\mbf W\mbf W^T+\sigma^2\mbf I$, on direction $\mbf v, \mbf v^T\mbf v = 1$, if $\mbf v$ is orthogonal to the subspace, which is shown as $\mbf v^T\mbf U=0$, then $\mbf v^\mbf C \mbf v = \mbf v^T\mbf {WW}^T\mbf v+\sigma^2\mbf v^T\mbf v = \sigma^2$, in which, we omitted $\mbf W^T\mbf v = \mbf R^T[(\mbf L_M-\sigma^2\mbf I)^{1/2}]^T\mbf U_M\mbf v = 0$. \newline
+If $\vv = \uu_i\in \mathbb{R}^D$, is an eigenvector, then $\vv^T\WW\WW^T\vv=\lambda_i$.\newline
+If we choose $M=D$, no reduction will be achieved and $\UU_M=\UU, \mbf L_M=\mbf L, \SS=\UU\mbf L\UU^T$, therefore, $\CC = \mbf S$. \newline
+Probabilistic PCA is most natural expressed as a mapping from the latent space into the data space $\xx=\WW\xx+\mu+\epsilon$.
+\subsubsection*{EM algorithm for PCA}
+In very high dimensional space, although there is close-formed solution for PCA, the computing is very time-consuming, so we turn to using EM algorithm to so PCA to reduce the time costing. \newline
+We write down the complete-data log likelihood and take its expectation with respect to the posterior distribution of the latent distribution evaluated using 'old' parameter values. Maximization of this expected comple-data likelihood then yields the 'new' ;parameter values.
+\begin{equation}\label{}
+  \ln p(\XX,\ZZ|\mu, \WW,\sigma^2) = \sum_{n=1}^{N}\{\ln p(\xx_n|\zz_n)+\ln p(\zz_n)\}
+\end{equation}
+where the $\mrm n^{\mrm{th}}$ row of the matrix $\ZZ$ is given by $\zz_n$. We can compute $\mu_{\mrm{ML}}$ using \ref{PCA.1} and it is convenient to substitute for $\mu$ at this stage.
+\begin{align}\label{}
+  \mathbb{E} [\ln p(\XX,\ZZ|\mu,\WW,\sigma^2)] & = -\frac{n=1}{N}\{\frac{D}{2}\ln(2\pi\sigma^2)+\frac12\mrm{Tr}(\mathbb{E}[\zz_n\zz_n^T]) \\
+  & +\frac{1}{2\sigma^2}\|\xx_n-\mu\|^2-\frac{1}{\sigma^2}\mathbb{E}[\zz_n]^T\WW^T(\xx_n-\mu) \\
+  & + \frac{1}{2\sigma^2}\mrm{Tr}(\mathbb{E}[\zz_n\zz_n^T]\WW^T\WW)\}
+\end{align}\label{}
+\begin{gather}\label{}
+  \mathbb{E}[\zz_n] = \MM^{-1}\WW^T(\xx_n-\bar{\xx}) \\
+  \bb{E}[\zz_n\zz_n^T] = \sigma^2\MM^{-1}+\bb{E}[\zz_n]\bb{E}[\zz_n]^T
+\end{gather}
+where $\MM = \WW^T\WW+\sigma^2\II$.
+In the M step, we maximize with respect to $\WW$ and $\sigma^2$, keeping the posterior statistics fixed. Maximization with respect to $\sigma^2$ is straightforward, and
+\begin{gather}\label{}
+  \WW_{\mrm{new}} = [\sum_{n=1}^{N}(\xx_n-\bar{\xx})\bb{E}[\zz_n]^T][\sum_{n=1}^{N}\Exp[\zz_n\zz_n^T]]^{-1}  \\
+  \sigma^2_{\mrm{new}} = \frac{1}{ND}\sum_{n=1}^{N}\{\|\xx_n-\bar{\xx}\|^2-2\Exp[\zz_n]^T\WW_{\mrm{new}}^T(\xx_n-\bar{\xx})+\mrm{Tr}(\Exp[\zz_n\zz_n^T]\WW_{\mrm{new}}^T\WW_{\mrm{new}}) \}
+\end{gather}
+\subsubsection*{Bayesian PCA}
+\subsubsection*{Factor analysis}
+The only difference between FA and PCA is that we assume
+\begin{equation}\label{}
+  p(\xx|\zz) = \normD(\xx|\WW\zz+\mu,\Psi)
+\end{equation}
+in FA, where $\Psi$ is diagonal. Now, the marginal distribution of $\xx$ is $p(\xx) = \normD(\xx|\mu, \CC), \CC = \WW\WW^T+\Psi$. When we do maximum likelihood, $\mu_{\mrm{ML}}$ is still the sample mean, while there is no close-formed solution for $\WW$ and we must turn to EM algorithm. And here, the sufficient  statistics are
+\begin{gather}\label{}
+  \Exp[\zz_n] = \mbf G\WW^T\Psi^{-1}(\xx_n-\bar \xx) \\
+  \Exp[\zz_n\zz_n^T] = \mbf G+\Exp[\zz_n]\Exp^T[\zz_n] \\
+\end{gather}
+where $\mbf G = (\II+\WW^T\Psi\rev\WW)\rev$.
+
+\subsection{Kernel PCA}
+In this section, we will apply the technique of kernel to PCA.\newline
+Suppose we have a data set of $N$ observations $\{\xx_n\}$ and $\sum_{n=1}^{N}\xx_n$, $\mbf S=\frac{1}{N}\sum_{n=1}^{N}\xx_n\xx_n^T$ \newline
+\begin{equation}\label{}
+  \mbf S\uu_i=\lambda_i\uu_i, \uu_i^T\uu_i = 1.
+\end{equation}
+Now consider a nonlinear transformation $\phi(\xx)$ into an $M$-dimensional feature space, so that each data point $\xx_n$ is thereby projected onto a point $\phi(\xx_n)$.
+For the moment, let us assume that the projected data set also has zero mean, so that $\sum_{n=1}^{N}\phi(\xx_n) = \mbf 0$. The $M\times M$ sample covariance matrix in feature space is given by
+\begin{equation}\label{}
+  \CC = \frac{1}{N}\sum_{n=1}^{N}\phi(\xx_n)\phi(\xx_n)^T
+\end{equation}
+and its eigenvectors is defined by
+\begin{equation}\label{}
+  \CC\vv_i=\lambda_i\vv_i,\ \vv_i^\mrm{T}\vv_j=\delta_{ij}
+\end{equation}
+$i=1, \dots, M$. We want to solve the eigenvalue problem without having to work explicitly in the feature space. For the definition of $\CC$, the eigenvectors $\vv_i$ satisfies
+\begin{equation}\label{}
+  \frac{1}{N}\sum_{n=1}^{N}\phi(\xx_n)\{\phi(\xx_n)^T\vv_i\} = \lambda_i\vv_i
+\end{equation}
+and we see (provided $\lambda_i>0$) that the vector $\vv_i$ is given by a linear combination of the $\phi(\xx_n)$ and so can be written in the form
+\begin{equation}\label{}
+  \vv_i=\sum_{n=1}^{N}a_{in}\phi(\xx_n).
+\end{equation}
+Substituting this expansion back into the eigenvector equation, we obtain
+\begin{equation}\label{}
+  \frac1N\sum_{n=1}^{N}\phi(\xx_n)\phi(\xx_n)^T\sum_{m=1}^{N}a_{im}\phi(\xx_m) = \lambda_i\sum_{n=1}^{N}a_{in}\phi(\xx_n).
+\end{equation}
+Multiply both sides by $\phi(\xx_l)^T$ and we obtain
+\begin{equation}\label{}
+  \frac1N\sum_{n=1}^{N}k(\xx_l,\xx_n)\sum_{m=1}^{N}a_{im}k(\xx_n,\xx_m) = \lambda_i\sum_{n=1}^{N}a_{in}k(\xx_l,\xx_n).
+\end{equation}
+This can be written in matrix notation as
+\begin{equation}\label{}
+    \KK^2\mbf a_i=\lambda_iN\KK\mbf a_i
+\end{equation}
+where $\mbf a_i$ is an $N$-dimensional column vector with elements $a_{ni}$ for $n = 1, \dots, N$. We can find solutions for $\mbf a_i$ by solving:
+\begin{equation}\label{}
+    \KK\mbf a_i = \lambda_iN\mbf a_i.
+\end{equation}
+We require the eigenvectors in feature space be normalized.
+\begin{equation}\label{}
+  \vv_i^T\vv_i=\sum_{n=1}^{N}\sum_{m=1}^{N}a_{in}a_{im}\phi(\xx_n)^T\phi(\xx_m) =\mbf a_i\KK\mbf a_i = \lambda_iN\mbf a_i^T\mbf a_i.
+\end{equation}
+Then the projection of a point $\xx$ onto the eigenvector $i$ is given by
+\begin{equation}\label{}
+  y_i(\xx) = \phi(\xx)^T\vv_i=\sum_{n=1}^{N}a_{in}\phi(\xx)^T\phi(\xx_n) = \sum_{n=1}^{N}a_{in}k(\xx,\xx_n).
+\end{equation}
+The dimension $M$ of the feature space can be much larger than $D$ and thus we can find a number of nonlinear principal components that can exceed $D$. However, the number of nonzero eigenvalues cannot exceed the number $N$ of data points.
+
+\subsection{Nonlinear Latent Variable Methods}
 
 \section{FOR NEW}
 
@@ -1080,7 +1659,7 @@ $P=p(\mathrm x)V$ if $\mathcal R$ is small enough, so $p(\mathrm x) = \frac{K}{N
 \textbf{based on two contradictory assumptions}: region is sufficiently small that the density is approximately constant over the region and yet sufficiently large that the number $K$ of points falling inside the region is sufficient for the binomial distribution to be sharply peaked.\newline
 If we fix $V$ and determine $K$ from the data,  giving rise to the kernel approach.
 $k(\mathrm u) =1$ if $|u_i|\leq 1/2, i=1, 2, \dots, D, $ else $0$ .\newline
-This represents a unit cube centred on the origin. The function $k(\mathrm u)$ is an example of a \emph{kernel function}\newline
+This represents a unit cube centred on the origin. The function $k(\mathrm u)$ is an example of a \textit{kernel function}\newline
 So $$K = \sum_{n=1}^Nk(\frac{\mathrm x-\mathrm x_n}{h}), p(\mathrm x) = \frac1N\sum_{n=1}^N\frac1{h^D}k(\frac{\mathrm x-\mathrm x_n}{h})$$
 and common choice for a kernel is Gaussian, which give rise to the following kernel density model:
 $$p(\mathrm x) = \frac1N\sum_{n=1}^N\frac{1}{(2\pi h^2)^{1/2}}\exp\{-\frac{||\mathrm x-\mathrm x_n||^2}{2h^2}\}$$
@@ -1277,17 +1856,17 @@ So the general EM algorithm is summarized below. Given a joint distribution $p(\
 \begin{enumerate}
   \item Choose an initial setting for the parameters $\theta^{\mrm{old}}$.
   \item \textbf{E step} Evaluate $p(\mrm Z|\mrm X, \theta^{\mrm{old}})$.
-  \item \textbf{M step} Evaluate $\theta^{\mrm{new}}$ given by 
+  \item \textbf{M step} Evaluate $\theta^{\mrm{new}}$ given by
   \begin{equation}\label{}
     \theta^{\mrm{new}} = \mrm{argmax}_\theta \mathcal Q(\theta,\theta^{\mrm{old}})
-  \end{equation} 
-  where 
+  \end{equation}
+  where
   \begin{equation}\label{}
     \mathcal Q(\theta,\theta^{\mrm{old}}) = \sum_\mrm{z} p(\mrm Z|\mrm X,\theta^{{\mrm{old}}})\ln p(\mrm X,\mrm Z|\theta).
   \end{equation}
   \item Check for convergence of either the log likelihood or the parameter values. If the convergence criterion is not satisfied, then let
   \begin{equation}\label{}
-    \theta^{\mrm{old}} \leftarrow \theta^{\mrm{new}} 
+    \theta^{\mrm{old}} \leftarrow \theta^{\mrm{new}}
   \end{equation}
   and return to step 2.
 \end{enumerate}
@@ -1297,11 +1876,11 @@ Consider the problem of maximizing the likelihood for the complete data set $\{\
 \begin{equation}\label{}
   p(\mrm{X,Z}|\mu,\Sigma,\pi) = \prod_{n=1}^{N}\prod_{k=1}^{K}\pi_k^{z_{nk}}\normD(\mrm x_n|\mu_k,\Sigma_k)^{z_{nk}}
 \end{equation}
-where $z_{nk}$ denotes the $k^{th}$ component of $\mrm z_n$. Taking logarithm and 
+where $z_{nk}$ denotes the $k^{th}$ component of $\mrm z_n$. Taking logarithm and
 \begin{equation}\label{}
   \ln p(\mrm{X,Z}|\mu,\Sigma,\pi) = \sum_{n=1}^{N}\sum_{k=1}^{K}z_{nk}\{\ln \pi_k+\ln\normD(\mrm x_n|\mu_k,\Sigma_k)\}.
 \end{equation}
-Consider first the maximization with respect to the means and covariances. 
+Consider first the maximization with respect to the means and covariances.
 \begin{equation}\label{}
   \pi_k = \frac1N\sum_{n=1}^{N}z_{nk}
 \end{equation}
@@ -1316,23 +1895,23 @@ so that the mixing coefficients are equal to the fractions of data points.
 \subsubsection*{Relation to K-means}
 
 \subsection{The EM Algorithm in General}
-EM algorithm is a general technique for finding maximum likelihood solutions for probabilistic models having latent variables. Here we give a very general treatment of the EM algorithm. 
+EM algorithm is a general technique for finding maximum likelihood solutions for probabilistic models having latent variables. Here we give a very general treatment of the EM algorithm.
 
-Consider, observed variables $\mrm X$, latent variables $\mrm Z$ and parameters $\theta$. Our goal is to maximize the likelihood function given by 
+Consider, observed variables $\mrm X$, latent variables $\mrm Z$ and parameters $\theta$. Our goal is to maximize the likelihood function given by
 \begin{equation}\label{}
   p(\mrm X|\theta)=\sum_{\mrm z}p(\mrm X,\mrm Z|\theta).
 \end{equation}
-Suppose that direct optimization of $p(\mrm X|\theta)$ is difficult, but that optimization of the complete-data likelihood function $p(\mrm X,\mrm Z|\theta)$ is easier. Next we introduce a distribution $q(\mrm Z)$ defined over the latent variables, and 
+Suppose that direct optimization of $p(\mrm X|\theta)$ is difficult, but that optimization of the complete-data likelihood function $p(\mrm X,\mrm Z|\theta)$ is easier. Next we introduce a distribution $q(\mrm Z)$ defined over the latent variables, and
 \begin{equation}\label{}
   \ln p(\mrm X|\theta) = \mathcal L(q,\theta)+\mrm{KL}(q\|p)
-\end{equation} 
-where 
+\end{equation}
+where
 \begin{gather}\label{}
   \mathcal L(q,\theta) = \sum_{\mrm z}q(\mrm Z)\ln\{\frac{p(\mrm X,\mrm Z|\theta)}{q(\mrm Z)}\} \\
   \mrm {KL}(q\|p)=-\sum_{\mrm z}q(\mrm Z)\ln\{\frac{p(\mrm Z|\mrm X,\theta)}{q(\mrm Z)}\}.
 \end{gather}
- Suppose the current value of the parameter vector is $\theta^{old}$. In the E step, the lower bound $\mathcal L(q,\theta^{old})$ is maximized with respect to $q(\mrm Z)$ while holding $\theta^{old}$ fixed. 
- 
- In the subsequent M step, the distribution $q(\mrm Z)$ is held fixed and the lower bound $\mathcal L(q, \theta)$ is maximized with respect to $\theta$ to give some new value $\theta^{new}$. 
- 
+ Suppose the current value of the parameter vector is $\theta^{old}$. In the E step, the lower bound $\mathcal L(q,\theta^{old})$ is maximized with respect to $q(\mrm Z)$ while holding $\theta^{old}$ fixed.
+
+ In the subsequent M step, the distribution $q(\mrm Z)$ is held fixed and the lower bound $\mathcal L(q, \theta)$ is maximized with respect to $\theta$ to give some new value $\theta^{new}$.
+
 \end{document} 
