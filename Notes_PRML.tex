@@ -37,7 +37,7 @@
 \newcommand{\ud}{\mathrm{d}}
 \newcommand{\mx}{\mrm x}
 \newcommand{\mw}{\mrm w}
-
+\newcommand{\md}{\mrm d}
 \newcommand{\mB}{\mrm B}
 \newcommand{\mW}{\mrm W}
 
@@ -57,12 +57,14 @@
 \newcommand{\ww}{\mbf w}
 \newcommand{\mm}{\mbf m}
 \newcommand{\ttt}{\mbf t}
+\newcommand{\bbb}{\mbf b}
 \newcommand{\uu}{\mbf u}
 \newcommand{\vv}{\mbf v}
 \newcommand{\xx}{\mbf x}
 \newcommand{\yy}{\mbf y}
 \newcommand{\zz}{\mbf z}
 \newcommand{\bmu}{\bm{\mu}}
+\newcommand{\bphi}{\bm{\phi}}
 
 \newcommand{\Exp}{\mathbb{E}}
 \newcommand{\rev}{^{-1}}
@@ -70,6 +72,7 @@
 \newcommand{\data}{\mcal D}
 \newcommand{\cat}{\mcal C}
 \newcommand{\trans}{^{\mrm T}}
+\newcommand{\tit}{\textit}
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -549,9 +552,56 @@ to have little influence on the posterior distribution, we seek a form of prior 
 
 
 \section{Laplace Approximation}\label{Laplace Appro}
-In this chapter, we mainly want to solve the problem that when the posterior distribution is no longer Gaussian, how can we integrate exactly over the parameter vector.\newline
-So Laplace approximation can help us to transform a non-Gaussian distribution  into a Gaussian distribution.
-\section{Hessian Matrix}
+In this chapter, we mainly want to solve the problem that when the posterior distribution is no longer Gaussian, how can we integrate exactly over the parameter vector $\ww $. So Laplace approximation can help us to transform a non-Gaussian distribution  into a Gaussian distribution. Consider first the case of a single continuous variable $z$, and suppose
+\begin{equation}\label{}
+  p(z) = \frac{1}{Z}f(z)
+\end{equation}
+where $Z = \int f(z)\md z$ is the normalization coefficient and is unknown. Our goal is to find a Gaussian approximation $q(z)$ which is centred on a mode of the distribution $p(z)$. To find a mode of $p(z)$, we set $p'(z)|_{z=z_0} = 0$, or equivalently
+\begin{equation}\label{}
+  \frac{\ud f(z)}{\ud z}|_{z=z_0}=0.
+\end{equation}
+Then due to the property of the log of Gaussian distribution, we consider a Taylor expansion of $\ln f(z)$ centred on the mode $z_0$ so that
+\begin{equation}\label{}
+  \ln f(z)\simeq \ln f(z_0) - \frac{1}{2}A(z-z_0)^2
+\end{equation}
+where
+\begin{equation}\label{}
+  A = -\frac{\ud^2}{\ud z^2}\ln f(z)|_{z=z_0}.
+\end{equation}
+Then
+\begin{equation}\label{}
+  f(z) \simeq \hat f(z) = f(z_0)\exp\{-\frac A2(z-z_0)^2\}.
+\end{equation}
+Making normalization over $\hat f(z)$, we have
+\begin{equation}\label{}
+  q(z) = \frac{A}{2\pi}^{1/2}\exp\{-\frac A2(z-z_0)^2\}.
+\end{equation}
+Note that the Gaussian approximation is only be well defined when $A>0$, in other words, the stationary point $z_0$ must be a local maximum.
+
+Then we want to extend to $M$-dimensional space $\zz$ and $p(\zz) = \frac 1Zf(\zz)$. At a stationary $\zz_0$ the gradient $\nabla f(\zz) =0$. Similarly
+\begin{equation}\label{}
+  \ln f(\zz) \simeq \ln f(\zz_0)-\frac12(\zz-\zz_0)\trans \mbf A(\zz-\zz_0)
+\end{equation}
+where the $M\times M$ Hessian matrix $\mbf A$ is defined by
+\begin{equation}\label{}
+  \mbf A = -\nabla\nabla\ln f(\zz)|_{\zz=\zz_0}.
+\end{equation}
+Taking the exponential of the both side, we obtain
+\begin{equation}\label{}
+  f(\zz) \simeq f(\zz_0)\exp\{-\frac12(\zz-\zz_0)\trans\mbf A(\zz-\zz_0)\}.
+\end{equation}
+Making normalization, we have
+\begin{equation}\label{}
+  q(\zz) = \frac{|\mbf A|^{1/2}}{(2\pi)^{M/2}}\exp\{-\frac12(\zz-\zz_0)\trans\mbf A(\zz-\zz_0)\} = \normD(\zz|\zz_0,\mbf A^{-1}).
+\end{equation}
+This Gaussian distribution is only well defined when its \textit{precision matrix}, given by $\mbf A$, is positive definite.
+
+Note that the normalization constant $Z$ of the true distribution does not need to be known in order to apply the Laplace method. As a result of the central limit theorem, the posterior distribution for a model is expected to become increasingly better when the number of data points is increased, so we would expect the Laplace approximation to be most useful when the number of data points is relatively large.
+\subsubsection*{Model comparison and BIC}
+This section illustrates \textit{Occam factor} and \textit{BIC} in view of the Laplace approximation, more details can be found in section 4.4.1 of \textit{PRML}.
+
+
+\section{Jacobian Matrix and Hessian Matrix}\label{Matrix}
 \section{FOR NEW}
 
 \chapter{Models}
@@ -1036,15 +1086,15 @@ We first make a nonlinear transformation of the input $\xx$ using a vector of ba
 The posterior probability of class $\cat_1$ can be written as a logistic sigmoid acting on a linear function of the feature vector $\phi$:
 \begin{equation}\label{}
   p(\cat_1|\phi)=y(\phi)=\sigma(\ww\trans\phi)
-\end{equation} 
-with $p(\cat-2|\phi) = 1-p(\cat_1|\phi)$. Here $\sigma(\cdot)$ is the \textit{logistic sigmoid} function. In the termninology of statistics this model is also known as \textit{logistic regression}. 
+\end{equation}
+with $p(\cat-2|\phi) = 1-p(\cat_1|\phi)$. Here $\sigma(\cdot)$ is the \textit{logistic sigmoid} function. In the termninology of statistics this model is also known as \textit{logistic regression}.
 
-We now use maximum likelihood to determine the parameters of the logistic regression model. 
+We now use maximum likelihood to determine the parameters of the logistic regression model.
 
-For a data set $\{\phi_n,t_n\}$ where $t_n\in\{0,1\}$ and $\phi_n=\phi(\xx_n)$, with $n=1,\cdots,N$ the likelihood function can be written as 
+For a data set $\{\phi_n,t_n\}$ where $t_n\in\{0,1\}$ and $\phi_n=\phi(\xx_n)$, with $n=1,\cdots,N$ the likelihood function can be written as
 \begin{equation}\label{}
   p(\ttt|\ww) = \prod_{n=1}^{N}y_n^{t_n}\{1-y_n\}^{1-t_n}
-\end{equation} 
+\end{equation}
 where $\ttt = (t_1,\dots,t_N)\trans$ and $y_n = p(\cat_1|\phi_n)$. We define an error function by taking the negative logarithm of the likelihood, which gives the \textit{cross-entropy} error function in the form
 \begin{equation}\label{}
   E(\ww) = -\ln p(\ttt|\ww) = -\sum_{n=1}^{N}\{t_n\ln y_n+(1-t_n)\ln(1-y_n)\}
@@ -1062,81 +1112,197 @@ The Newton-Raphson update for minimizing a function $E(\mathrm w)$ is
    \ww^{(\mathrm {new})}=\ww^{(\mathrm {old})}-\mbf H^{-1}\nabla E(\ww)
 \end{equation}
 
-If we apply the Newton-Raphson method  to the linear regression with sum-of -squares error function in section2.2, we'll find the formula gives the exact solution in one step. 
+If we apply the Newton-Raphson method  to the linear regression with sum-of -squares error function in section2.2, we'll find the formula gives the exact solution in one step.
 
-While for logistic regression model with cross-entropy error function, we see the gradient and Hessian of this error function are given by 
+While for logistic regression model with cross-entropy error function, we see the gradient and Hessian of this error function are given by
 \begin{gather}\label{}
   \nabla E(\ww) = \sum_{n=1}^N(y_n-t_n)\phi_n = \Phi^T(\yy-\ttt) \\
   \mbf H=\nabla\nabla E(\ww) = \sum_{n=1}^Ny_n(1-y_n)\phi_n\phi_n^T = \Phi\trans \mbf R\Phi
 \end{gather}
-where $R$ is a diagonal matrix and $R_{nn} = y_n(1-y_n)$. So Hessian matrix is no longer constant but depends on $\ww$ through the weighting matrix $\RR$. So we must apply the normal equations iteratively, each time using the new weight vector $\ww$ to compute a revised weighing matrix $\RR$. For this reason, the algorithm is known as $IRLS$. 
+where $R$ is a diagonal matrix and $R_{nn} = y_n(1-y_n)$. So Hessian matrix is no longer constant but depends on $\ww$ through the weighting matrix $\RR$. So we must apply the normal equations iteratively, each time using the new weight vector $\ww$ to compute a revised weighing matrix $\RR$. For this reason, the algorithm is known as $IRLS$.
 \subsubsection*{Multiclass logistic regression}
 Extending two-class case to K-class case, more  details seen in section4.3.4 in \textit{PRML}.
-\subsubsection{Probit regression}
 
-
-
-\subsubsection*{The Laplace Approximation}
+\subsection{The Laplace Approximation}
 Refer to another section in this notes: \ref{Laplace Appro}.
- 
-\subsubsection{Bayesian Logistic Regression}
-assume the prior $p(\mathrm w) = \mathcal N(\mathrm w|\mathrm m_0,\mathrm S_0)$
-$$p(\mathrm w|\mathrm t) \propto p(\mathrm w)p(\mathrm t|\mathrm w)$$
-and
-$$\ln p(\mathrm w|\mathrm t) = -\frac12(\mathrm w-\mathrm m_0)^T\mathrm S_0^{-1}(\mathrm w-\mathrm m_0)+\sum_{n=1}^N\{t_n\ln y_n +(1-t_n)\ln (1-y_n)\} + const$$
-$$y_n = \sigma(\mathrm w^T\phi_n)$$
-and using Laplace approximation, we obtain posterior distribution
-$$q(\mathrm w) = \mathcal N(\mathrm w|\mathrm w_{\mathrm {MAP}}, \mathrm S_N)$$
 
-
-
+\subsection{Bayesian Logistic Regression}
+Exact Bayesian inference for logistic regression is intractable. So here we consider the application of the Laplace approximation to the problem.
+\subsubsection*{Laplace approximation}
+Because we seek a Gaussian representation for the posterior distribution, it's natural to begin with a Gaussian prior:
+\begin{equation}\label{}
+  p(\ww)=\normD(\ww|\mm_0,\mbf S_0)
+\end{equation}
+where $\mm_0$ and $\mbf S_0$ are fixed hyperparameters. Then the posterior over $\ww$ is given by
+\begin{equation}\label{}
+  p(\ww|\ttt)\propto p(\ww)p(\ttt|\ww).
+\end{equation}
+Then
+\begin{align}\label{}
+  \ln p(\ww|\ttt) & = -\frac12(\ww-\mm_0)\trans\mbf S_0\rev(\ww-\mm_0) \\
+  & +\sum_{n=1}^{N}\{t_n\ln y_n+(1-t_n)\ln (1-y_n)\} + \mrm{const}
+\end{align}
+where $y_n=\sigma(\ww\trans\phi_n)$. To obtain a Gaussian approximation to the posterior distribution, we first maximize the posterior distribution to give the MAP solution $\ww_{\mrm{MAP}}$, which defines the mean of the Gaussian. Then the covariance is given by
+\begin{equation}\label{}
+  \mbf S_N=-\nabla\nabla\ln p(\ww|\ttt) = \mbf S_0\rev+\sum_{n=1}^{N}y_n(1-y_n)\phi_n\phi_n\trans.
+\end{equation}
+The Gaussian approximation therefore takes the form
+\begin{equation}\label{}
+  q(\ww)=\normD(\ww|\ww_{\mrm{MAP}}, \mbf S_N).
+\end{equation}
+Then the remaining task is to marginalize w.r.t this distribution in order to make predictions.
+\subsubsection*{Predictive distribution}
+The predictive distribution for class $\cat_1$, given a new feature vector $\phi(\xx)$, is given by
+\begin{equation}\label{eq2.3.4}
+  p(\cat_1|\bm \phi,\ttt) = \int p(\cat_1|\bm \phi,\ww)p(\ww|\ttt)\ud \ww\simeq\int\sigma(\ww\trans\bphi)q(\ww)\ud\ww.
+\end{equation}
+and $p(\cat_2|\bphi, \ttt)=1-p(\cat_1|\bphi, \ttt)$.
+If we use
+\begin{equation}\label{}
+  \sigma(\ww\trans\bphi)=\int \delta(a-\ww\trans\bphi)\sigma(a)\ud a
+\end{equation}
+to substitute into eq\ref{eq2.3.4} and denote $a = \ww\trans\bphi$,we will obtain
+\begin{equation}\label{}
+  \int \sigma(\ww\trans\bphi)q(\ww)\ud \ww=\iint\delta(a-\ww\trans\bphi)\sigma(a)q(\ww)\ud a\ud\ww = \int \sigma(a)p(a)\ud a.
+\end{equation}
+where
+\begin{equation}\label{}
+  p(a) = \int \delta(a-\ww\trans\bphi)q(\ww)\ud\ww.
+\end{equation}
+Because $q(\ww)$ is Gaussian, $p(a)$ is also Gaussian, so we just need to find out the mean and covariance:
+\begin{gather}\label{}
+  \mu_a=\Exp[a] = \int p(a)a\ud a =\int q(\ww)\ww\trans\bphi\ud \ww =\ww_{\mrm{MAP}}\trans\bphi\\
+  \sigma_a^2=\mrm{var}[a] = \int p(a)\{a^2-\Exp[a]^2\}\ud a = \bphi\trans\mbf S_N\bphi.
+\end{gather}
+Thus our variational approximation to the predictive distribution becomes
+\begin{equation}\label{}
+  p(\cat_1|\ttt) = \int \sigma(a)p(a)\ud a=\int \sigma(a)\normD(a|\mu_a,\sigma_a^2)\ud a.
+\end{equation}
 
 
 
 \section{Neural Networks}
+In this section, our focus is on neural networks as efficient models for statistical pattern recognition.
 \subsection{Feed-forward Network Functions}
 The linear models for regression and classification discussed in Chapters 3 and 4, respectively, are based on linear combinations of fixed nonlinear basis functions $\phi_j(\mathrm x)$ and take the form
-\begin{equation}\label{eq3.4.1}
+\begin{equation}\label{eq2.4.1}
   y(\mathrm x,\mathrm w) = f(\sum_{j=1}^Mw_j\phi_j(\mathrm x))
 \end{equation}
-where $f(\dot)$ is a nonlinear activation function in the case of classification and is the identity in the case of regression.\newline
-Goal: extend this model by making the basis function $\phi_j(\mathrm x)$ depend on parameters and then allow these parameters to be adjusted.\newline
+where $f(\cdot)$ is a nonlinear activation function in the case of classification and is the identity in the case of regression. Our goal is to extend this model by making the basis function $\phi_j(\mathrm x)$ depend on parameters and then allow these parameters to be adjusted, along with the coefficients $\{w_j\}$, during training.
+
 For the first layer,
-\begin{gather}\label{eq3.4.2}
+\begin{gather}\label{}
 a_j=\sum_{j=1}^Dw_{ji}^{(1)}x_i+w_{j0}^{(1)} \\
 z_j=h(a_j)
 \end{gather}
-the activation functions $h(\dot)$  are generally chosen to be sigmoidal function or the 'tanh'.
+This quantities correspond to the outputs of the basis functions in eq\ref{eq2.4.1} that, in the context of neural networks, are called \textit{hidden units}. The activation functions $h(\cdot)$  are generally chosen to be sigmoidal function or the 'tanh'. Following eq\ref{eq2.4.1} these values are again linearly combined to give \textit{output unit activations}
+\begin{equation}\label{}
+  a_k=\sum_{j=1}^{M}w_{kj}^{(2)}z_j+w_{k0}^{(2)}
+\end{equation}
+where $k=1,\dots,K$ and $K$ is the total number of outputs. Finally, the output unit activations are transformed using an appropriate activation function to give a set of network output $y_k$. For standard regression problems, the activation function is the identity so that $y_k=a_k$. Similarly, for multiple binary classification problems, $y_k =\sigma(a_k)$. And for multiclass problems, a softmax function is used.
+
+Combining these various stages to give the overall network function that, for sigmoidal output unit activation functions, we obtain
+\begin{equation}\label{eq2.4.2}
+  y_k(\xx,\ww) = \sigma(\sum_{j=1}^{M}w_{kj}^{(2)}h(\sum_{i=1}^{D}w_{ji}^{(1)}x_i+w_{j0}^{(1)})+w_{k0}^{(2)})
+\end{equation}
+where the set of all weight and bias parameters have been grouped together into a vector $\ww$. The process of evaluating \ref{eq2.4.2} can then be interpreted as a \textit{forward propagation} of information through the network.
+
+One property of feed-forward networks, which will play a role when we consider Bayesian model comparison, is that multiple distinct choices for the weight vector
+$\ww$ can all give rise to the same mapping function from inputs to outputs.
+
 \subsection{Network Training}
-simple idea to train the parameter: minimize the error function. e.g.
-\begin{equation}\label{eq3.4.3}
-  E(\mathrm w) = \frac12\sum_{n=1}^N||\mathrm y(\mathrm x_n,\mathrm w)-\mathrm t_n||^2
+There is a simple idea to train the parameter: minimize the error function. e.g.
+\begin{equation}\label{eq2.4.3}
+  E(\ww) = \frac12\sum_{n=1}^N\|\yy(\xx_n,\ww)-\ttt_n\|^2
 \end{equation}
-However we can provide a more general view of network training.
+However we can provide a more general view of network training by first giving a probabilistic interpretation to the network outputs.
 
-consider firstly \textbf{regression problem}
-$$p(t|\mathrm x,\mathrm w) = \mathcal N(t|y(\mathrm x,\mathrm w),\beta^{-1})$$
-when we find $\mathrm w$ by minimizing $E(\mathrm w)$, we obtain $\mathrm w_{ML}$.(IRLS algorithm) because the nonlinearity of the network function $y(\mathrm x_n,\mathrm w)$ causes the error $E(\mathrm w)$ to be nonconvex.  then we can find $\beta_{ML}$
-
-Then consider binary \textbf{classification problem}
-$$p(t|\mathrm  x,\mathrm w) = y(\mathrm  x,\mathrm  w)^t\{1-y(\mathrm  x,\mathrm  w)\}^{1-t}$$
-cross-entropy error function
-\begin{equation}\label{eq3.4.4}
-E(\mathrm w) = -\sum_{n=1}^N\{t_n\ln y_n+(1-t_n)\ln(1-y_n)\}
+Consider firstly \textbf{regression problem} with a single target variable $t$ and $t$ has a Gaussian distribution with an $\xx$-dependent mean:
+\begin{equation}\label{eq2.4.4}
+p(t|\xx,\ww)=\normD(t|y(\xx,\ww), \beta\rev).
 \end{equation}
-where $y_n = y(\mathrm x_n,\mathrm w)$
-
-To sum up, for regression we use linear outputs and a sum-of-squares error, for (multiple independent) binary classifications we use logistic sigmoid outputs and a cross-entropy error function, and for multiclass classification we use softmax outputs with the corresponding multiclass cross-entropy error function.
-\subsubsection{Parameter optimization}
-\textbf{Goal}: We turn next to the task of finding a weight vector w which minimizes the chosen function $E(\mathrm w)$.\newline
-But the error function typically has a highly nonlinear dependence on the weights and bias parameters, and so there will be many points in weight space at which the gradient vanishes.\newline
-We can use local quadratic approximation and then lead to gradient descent optimization.
-\begin{equation}\label{eq3.4.5}
-  \mathrm w^{(\tau+1)} = \mathrm w^{(\tau)} -\eta\nabla E(\mathrm w^{(\tau)})
+For the conditional distribution given by \ref{eq2.4.4}, it is sufficient to take the output unit activation function to be identity. Given a data set of $N$  i.i.d observations $\XX =\{\xx_1,\dots,\xx_N$ along with corresponding target values $\ttt = \{t_1,\dots,t_N\}$, we can construct the corresponding likelihood function
+\begin{equation}\label{}
+  p(\ttt|\XX,\ww,\beta)=\prod_{n=1}^{N}p(t_n|\xx_n,\ww,\beta).
 \end{equation}
-After each such update, the gradient is re-evaluated for the new weight vector and the process repeated.
+Taking the negative logarithm, we obtain the error function
+\begin{equation}\label{}
+  \frac{\beta}{2}\sum_{n=1}^{N}\{y(\xx_n,\ww)-t_n\}^2-\frac{N}{2}\ln \beta+\frac N2\ln(2\pi).
+\end{equation}
+Consider first the determination of $\ww$, we want to minimize the error function given by
+\begin{equation}\label{}
+  E(\ww)=\frac12\sum_{n=1}^{N}\{y(\xx,\ww)-t_n\}^2.
+\end{equation}
+The value of $\ww$ found by minimizing $E(\ww)$ will be denoted $\ww_{\mrm{ML}}$. Then
+\begin{equation}\label{}
+  \frac{1}{\beta_{\mrm{ML}}}=\frac1N\sum_{n=1}^{N}\{y(\xx_n,\ww_{\mrm{ML}}-t_n\}^2.
+\end{equation}
+
+Then consider the case of \textbf{binary classification problem}. The conditional distribution given inputs is then a Bernoulli distribution of the form
+\begin{equation}\label{}
+  p(t|\xx,\ww) = y(\xx,\ww)^t\{1-y(\xx,\ww)\}^{1-t}.
+\end{equation}
+If we consider a training set, then the error function is then a \textit{cross-entropy} error function  of the form
+\begin{equation}\label{}
+  E(\ww) = \sum_{n=1}^{N}\{t_n\ln y_n+(1-t_n)\ln (1-y_n)\}
+\end{equation}
+
+Finally we consider the standard multiclass classification problem in which each input is assigned to one of $K$ mutually exclusive classes, and the networks outputs are interpreted as $y_k(\xx,\ww) = p(t_k=1|\xx)$, leading to the following error function
+\begin{equation}\label{}
+  E(\ww) = -\sum_{n=1}^{N}\sum_{k=1}^{K}t_{kn}\ln y_k(\xx_n,\ww).
+\end{equation}
+And the output unit activation function is given by
+\begin{equation}\label{}
+  y_k(\xx,\ww) = \frac{\exp(a_k(\xx,\ww)}{\sum_j\exp(a_j(\xx_n,\ww))}
+\end{equation}
+\subsubsection*{Parameter optimization}
+Then we turn next to the task of finding a weight vector w which minimizes the chosen function $E(\mathrm w)$. But the error function typically has a highly nonlinear dependence on the weights and bias parameters, and so there will be many points in weight space at which the gradient vanishes.
+
+Because there is clearly no hope of finding an analytical solution to the equation $\nabla E(\ww) = 0$ we resort to iterative numerical procedures.\textbf{The optimization of continuous nonlinear functions is a widely studied problem.} Most techniques involve choosing some initial value $\ww^{(0)}$ for the weight vector and then moving through weight space in a succession of steps of the form
+\begin{equation}\label{eq2.4.6}
+  \ww^{(\tau+1)} = \ww^{(\tau)}+\delta\ww^{(\tau)}.
+\end{equation}
+Then gradient information is important here. So we consider a local approximation of the error function based on Taylor expansion.
+
+\subsubsection*{Local quadratic approximation}
+Consider the Taylor expansion of $E(\ww)$ around some point $\hat \ww$ in weight space
+\begin{equation}\label{eq2.4.5}
+  E(\ww) \simeq E(\hat \ww)+(\ww-\hat \ww)\trans \bbb+\frac12(\ww-\hat \ww)\trans\mbf H(\ww-\hat \ww)
+\end{equation}
+where
+\begin{equation}\label{}
+  \bbb \equiv \nabla E|_{\ww=\hat\ww}
+\end{equation}
+and the Hessian matrix $\mbf H =\nabla\nabla E$.
+
+From \ref{eq2.4.5}, we obtain
+\begin{equation}\label{}
+  \nabla E \simeq  \bbb+\mbf H(\ww-\hat\ww).
+\end{equation}
+
+Considering the minimum point $\ww^*$, we have
+\begin{equation}\label{}
+  E(\ww) = E(\ww^*)+\frac12(\ww-\ww^*)\trans\mbf H(\ww-\ww^*).
+\end{equation}
+So if $\ww^*$ is a minimum point, the Hessian matrix $\mbf H$ should be \textit{positive definite}, which means all the eigenvalues of $\mbf H$ is positive.
+\subsubsection*{Gradient descent optimization}
+The simplest approach to using gradient information is to choose the weight update in \ref{eq2.4.6} to comprise a small step in the direction of the negative gradient, so
+that
+\begin{equation}\label{}
+  \ww^{(\tau+1)} =\ww^{(\tau)}-\eta\nabla E(\ww^{(\tau)})
+\end{equation}
+where $\eta$ is called \tit{learning rate}. Note that the whole data set is used and this technique was once called \tit{batch} method. At each step the weight vector is moved in the direction of the greatest rate of decrease of the error function, and so this approach is known as \tit{gradient descent} or \tit{steepest descent}.
+
+For batch optimization, there are more efficient methods, such as \tit{conjugate gradients} and \tit{quasi-Newton} methods.
+
+Also, there is an online version of gradient descent called \tit{sequential gradient descent or stochastic gradient descent}, make update to the weight vector based on one data point at a time, so that
+\begin{equation}\label{}
+  \ww^{(\tau+1)}=\ww^{(\tau)} -\eta\nabla E_n(\ww^{(\tau)}).
+\end{equation}
+
 \subsection{Error Backpropagation}
 \textbf{Goal}: find an efficient technique for evaluating  the gradient of an error function $E(\mathrm w)$ for a feed-forward neural network.
+
 \textbf{Algorithm}:
 \begin{enumerate}
   \item Apply an input vector xn to the network and forward propagate through the network to find the activations of all the hidden and output units.
@@ -1144,9 +1310,24 @@ After each such update, the gradient is re-evaluated for the new weight vector a
   \item Backpropagate the $\delta$’s using to obtain $\delta j$ for each hidden unit in the network.
   \item Evaluate the required derivatives.
 \end{enumerate}
-\subsection{ Regularization in Neural Networks}
-To avoid over-fitting, we can add a regularizer to the error function: $$E^*(\mathrm w) = E(\mathrm w) +\frac{\lambda}2\mathrm w^T\mathrm w$$
-Another way to avoid over-fitting is early stopping.  In fact, in the case of a quadratic error function, we can verify this insight, and show that early stopping should exhibit similar behaviour to regularization using a simple weight-decay term.
+\subsection{Jacobian Matrix and Hessian Matrix}
+Refer to \ref{Matrix}. 
+
+\subsection{Regularization in Neural Networks}
+To avoid over-fitting, we can add a regularizer to the error function: 
+\begin{equation}\label{}
+  \tilde{E}(\ww) = E(\ww)+\frac{\lambda}{2}\ww\trans\ww.
+\end{equation}
+This regularizer can be interpreted as the negative logarithm of a zero-mean Gaussian prior distribution over the weight vector $\ww$. 
+
+There are also many other ways to avoid over-fitting:
+\begin{itemize}
+  \item Early stopping
+  \item Invariance 
+  \item Tangent propagation
+  \item Training with transformed data
+\end{itemize}
+More details can be found in section5.5 in \tit{PRML}.
 \subsubsection{Convolutional networks}
 the basis of  convolutional network is to build the invariance property into the structure of a neural network And it is realized through three mechanisms :
 \begin{itemize}
@@ -1156,7 +1337,8 @@ the basis of  convolutional network is to build the invariance property into the
 \end{itemize}
 However, this approach ignores a key property of images, which is that nearby pixels are more strongly correlated than more distant pixels.
 \subsection{Mixture Density networks}
-This section aims to model non-Gaussian distributions.
+
+
 \subsection{Bayesian Neural Networks}
 So far, our discussion of neural networks has focussed on the use of maximum likelihood to determine the network parameters (weights and biases). Regularized maximum likelihood can be interpreted as a MAP (maximum posterior) approach in which the regularizer can be viewed as the logarithm of a prior parameter distribution. However, in a Bayesian treatment we need to marginalize over the distribution of parameters in order to make predictions.
 
