@@ -165,8 +165,8 @@ key idea can be sumed as:
 \mathrm{posterior} \propto \mathrm{likelihood} \times \mathrm{prior}
 \end{equation}
 \textbf{Bayesian and frequentist paradigm}
-for frequentist, $\textbf  w$ is considered to be fixed parameter and its vlaue is determined by some form of 'estimator'.\newline
-one common frequentist estimator is \emph{maximum likelihood},  maximize likelihood function $p(\mathcal{D}|\textbf w)$, in machine learning, negative lof og the likelihood function is called an \emph{error function}.\newline
+for frequentist, $\textbf  w$ is considered to be fixed parameter and its value is determined by some form of 'estimator'.\newline
+one common frequentist estimator is \emph{maximum likelihood},  maximize likelihood function $p(\mathcal{D}|\textbf w)$, in machine learning, negative log the likelihood function is called an \emph{error function}.\newline
 \emph{bootstrap} technique.\newline
 for Bayesian, there is only a single data set $\mathcal{D}$ and the uncertainty in the parameters is expressed through a probability distribution over $\textbf w$\newline
 inclusion of prior knowledge\newline
@@ -1355,43 +1355,112 @@ A big difference between this chapter and previous ones is that the training dat
 
 \textit{radial basis functions}: depend only on the magnitude of the distance  between the arguments so that $k(\mathrm x,\mathrm x') = k(||\mathrm x-\mathrm x'||)$
 \subsection{Dual Representations}
-This section aims to obtain kernel functions naturally via reformulate linear models for regression and classification in terms of a dual representation.  And the existence of a dual representation based on the Gram matrix is a property of many linear models including the perceptron.
+Many linear models for regression and classification can be reformulated in terms of a dual representation in which the kernel function arises naturally. Here we consider a linear regression model whose parameters are determined by minimizing a regularized sum-of-squares error function given by
+\begin{equation}\label{eq2.5.1}
+  J(\ww) = \frac12\sum_{n=1}^{N}\{\ww\trans\phi(\xx_n)-t_n\}^2 +\frac\lambda2\ww\trans\ww.
+\end{equation}
+By setting the gradient of $J(\ww)$ w.r.t $\ww$ equal to zero, we see
+\begin{equation}\label{}
+  \ww = -\frac{1}{\lambda}\sum_{n=1}^{N}\{\ww\trans\phi(\xx_n)-t_n\}\phi(\xx_n)=\sum_{n=1}^{N}a_n\phi(\xx_n)=\Phi\trans\mbf a
+\end{equation}
+where $\Phi$ is the design matrix, whose $n^{\mrm{th}}$ row is given by $\phi(\xx_n)\trans$. Here the vector $\mbf a = (a_1,\dots,a_N)\trans$, and
+\begin{equation}\label{}
+  a_n = -\frac1\lambda \{\ww\trans\phi(\xx_n)-t_n\}.
+\end{equation}
+Then if we reformulate \ref{eq2.5.1} in terms of the parameter vector $\mbf a$ rather than $\ww$ and set the gradient w.r.t. $\mbf a$ to zero, we can obtain
+\begin{equation}\label{}
+  \mbf a= (\KK +\lambda \II_N)\rev\ttt
+\end{equation}
+and
+\begin{equation}\label{}
+  J(\mbf a) = \frac12\mbf a\trans\KK\KK\trans\mbf a-\mbf a\trans\KK\ttt+\frac12\ttt\trans\ttt+\frac{\lambda}{2}\mbf a\trans\KK\mbf a
+\end{equation}
+where $\KK$ is define as \textit{Gram matrix} $\KK=\Phi\Phi\trans$:
+\begin{equation}\label{}
+  K_{nm} = \phi(\xx_n)\trans\phi(\xx_m)=k(\xx_n,\xx_m).
+\end{equation}
+Then, given a new input $\xx$ we obtain the prediction as:
+\begin{equation}\label{}
+  y(\xx)=\ww\trans\phi(\xx)=\mbf a\trans\Phi\phi(\xx)= \mbf k(\xx)\trans(\KK+\lambda \II_N)\rev\ttt
+\end{equation}
+where we define the vector $\mbf k(\xx)$ with elements $k_n(\xx) = k(\xx_n,\xx)$. Thus we see that the dual formulation allows the solution to the least-squares problem to be
+expressed entirely in terms of the kernel function $k(\xx, \xx')$.
+
 \subsection{ Construction of Kernels}
 How to construct a valid kernel is a problem. One approach is to choose a feature space mapping $\phi(\mathrm x)$ and then use it to find the corresponding  kernel.
 \begin{equation}
-  k(x, ,x') = \phi(x)^T\phi(x') = \sum_{i=1}^M\phi_i(x)\phi_i(x')
+  k(\xx, \xx') = \phi(\xx)^T\phi(\xx') = \sum_{i=1}^M\phi_i(\xx)\phi_i(\xx')
 \end{equation}
 But, an alternative approach is to construct kernel functions directly, at the same time, we should ensure it is valid.  A necessary and sufficient condition for a function $k(\mathrm x, \mathrm  x') $ to be a valid kernel is that the Gram matrix $\mathrm  K$ whose elements are given by $k(\mathrm  x_n,\mathrm  x_m)$, should be positive semidefinite for all possible choices of the set $\{\mathrm  x_n\}$.
 
 And there are a series techniques to construct valid kernels out of simpler kernels.
 
 A commonly used kernel takes the form:
-$$k(\mathrm  x,\mathrm  x') = \exp(-||\mathrm  x-\mathrm  x'||^2/2\sigma^2)$$
-called 'Gaussian' kernel.
+$$k(\xx,\xx') = \exp(-||\xx-\xx'||^2/2\sigma^2)$$
+called 'Gaussian' kernel.  We can see that this is a valid kernel by expanding the square
+\begin{equation}\label{}
+  \|\xx'-\xx\|^2 =\xx\trans\xx+(\xx')\trans\xx'-2\xx\trans\xx'
+\end{equation}
+to give
+\begin{equation}\label{}
+  k(\xx,\xx')=\exp(-\xx\trans\xx/2\sigma^2)\exp(\xx\trans\xx'/2\sigma^2)\exp(-(\xx')\trans\xx'/2\sigma^2)
+\end{equation}
+then making use of some properties together with the validity of the linear kernel $k(\xx,\xx')=\xx\trans\xx'$, we can obtain the validity of Gaussian kernel.
+
 
 And another powerful approach to the construction of kernels starts from a probabilistic generative model.  $$k(\mathrm  x,\mathrm x') = p(\mathrm  x)p(\mathrm  x')$$
 \subsection{Radial Basis Function Networks}
-Expressing $f(\mathrm{x})$ as a linear combination of radial basis functions, one \textbf{centred on every data point}
+In order to find a smooth function $f(\xx)$ that fits every target value exactly, we express $f(\mathrm{x})$ as a linear combination of radial basis functions, one \textbf{centred on every data point}
 \begin{equation}
   f(\mathrm{x})  = \sum_{n=1}^{N}w_nh(\parallel\mathrm{x}-\mathrm{x}_n\parallel)
 \end{equation}
-we can use least squares to find $\{w_n\}$
+we can use least squares to find $\{w_n\}$. But because the number of parameters is exactly the number of data points, over-fitting will certainly become a concern.
 
-Motivation for RBF:   \textit{Nadaraya-Watson} model
+Another motivation for radial basis functions comes from a consideration of the interpolation problem when the input (rather than the target) variable is noisy, denoting the noise as $\bm \xi$, then the sum-of-squares error function becomes
+\begin{equation}\label{}
+  E=\frac12\sum_{n=1}^{N}\int \{y(\xx_n+\bm\xi)-t_n\}^2\nu(\bm\xi)\ud\bm\xi.
+\end{equation}
+Using the calculus of variations, we can optimize w.r.t the function $f(\xx)$ to give
+\begin{equation}\label{}
+  y(\xx_n)=\sum_{n=1}^{N}t_nh(\xx-\xx_n)
+\end{equation}
+where the basis functions are given by
+\begin{equation}\label{}
+  h(\xx-\xx_n) = \frac{\nu(\xx-\xx_n))}{\sum_{n=1}^{N}\nu(\xx-\xx_n)}.
+\end{equation}
+This is known as \textit{Nadaraya-Watson} model. If the noise $\bm \xi$ is isotropic, so that it is a function only of $\|\bm\xi\|$, then the basis functions will be radial.
 
 Drawback: Because there is one basis function associated with every data point, the corresponding model can be computationally costly to evaluate when making predictions for new data points.
-\subsubsection{ Nadaraya-Watson model}
-Assume a Parzen density estimator to model the joint distribution $p(\mathrm x, t) $ so that :
+\subsubsection*{ Nadaraya-Watson model}
+Assume a Parzen density estimator to model the joint distribution $p(\xx, t) $, so that :
 \begin{equation}
-p(\mathrm x,t) = \frac1N\sum_{n=1}^{N}f(\mathrm x-\mathrm x_n,t-t_n)
+p(\xx,t) = \frac1N\sum_{n=1}^{N}f(\xx-\xx_n,t-t_n)
 \end{equation}
-$f(\dot)$ is the component density function. And finally we can obtain :
+$f(\cdot)$ is the component density function. Then the expression for the regression function $y(\xx)$ is given by
+\begin{align}\label{}
+  y(\xx) & =\Exp[t|\xx] =\int_{-\infty}^\infty tp(t|\xx)\ud t \\
+   & =\frac{\int tp(\xx,t)\ud t}{\int p(\xx,t)\ud t} \\
+   & = \frac{\sum_n \int tf(\xx-\xx_n,t-t_n)\ud t}{\sum_m \int f(\xx-\xx_m,t-t_m)\ud t}
+\end{align}
+By assuming 
+\begin{equation}\label{}
+  \int_{-\infty}^{\infty}f(\xx,t)t\ud t = 0,
+\end{equation}
+we can obtain 
 \begin{equation}
-k(\mathrm x,\mathrm x_n) = \frac{g(\mathrm x-\mathrm x_n)}{\sum_mg(\mathrm x-\mathrm x_m)}
+y(\xx) = \sum_nk(\xx,\xx_n)t_n
 \end{equation}
-where $g(\mathrm x) = \int_{-\infty}^{\infty}f(\mathrm x,t)\mathrm dt$
-\textbf{PROPERTY}:  giving more weight to the data points $\mathrm x_n$ that are close to $\mathrm x$.
-\subsection{Gaussian Processes}
+where the kernel function $k(\xx,\xx_n)$ is given by 
+\begin{equation}\label{}
+  k(\xx,\xx_n) = \frac{g(\xx-\xx_n)}{\sum_m g(\xx-\xx_m)}
+\end{equation}
+and we have defined 
+\begin{equation}\label{}
+  g(\xx) = \int_{-\infty}^{\infty}f(\xx,t)\ud t.
+\end{equation}
+
+
+\section{Gaussian Processes}
 
 Here we want to approximate a function $y= f(\xx)$ be a linear function in the form
 \begin{equation}
@@ -1407,7 +1476,7 @@ Then given training data set $\{\xx_1, \dots, \xx_N\}$ with targets $\{t_1,\dots
 \end{equation}
 where $\phi$ is a matrix with elements $\Phi_{nk}=\phi_k(\xx_n)$. So we have $\Exp[\yy]=\bmz,\ \mrm{cov}[\yy\yy\trans] = \frac{1}{\alpha}\Phi\Phi\trans=\KK$, where $K_{nm}=k(\xx_n,\xx_m)=\frac{1}{\alpha}\phi\trans(\xx_n)\phi(\xx_m)$
 
-\subsubsection*{Gaussian process for regression}
+\subsection{Gaussian process for regression}
 For regression problem, we assume our sampling target points $t_n$ is obtained by adding a noise $\epsilon$ to the true target number $y_n$:
 \begin{equation}
     t_n=y_n+\epsilon.
@@ -1457,7 +1526,7 @@ Note that the mean given by \ref{eq13.2} of the predictive distribution can be w
 \end{equation}
 where $a_n$ is the $n^{\mrm{th}}$ component of $\CC_N\rev\ttt$. Thus, the kernel function depends only on the distance $\|\xx_n-\xx_m\|$, then we obtain an expansion in \emph{radial basis functions}.
 
-\subsubsection*{Gaussian process for classification}
+\subsection{Gaussian process for classification}
 Define a Gaussian process on $a(\xx)$ then transform it using a logistic sigmoid $y=\sigma(a)$, so we obtain a non-Gaussian stochastic process over $y(\xx)$ where $y\in\{0,1\}$. Then the probability distribution over the target variable $t$ is then given by the Bernoulli distribution
 \begin{equation}
     p(t|a)=\sigma(a)^t(1-\sigma(a))^{1-t}.
