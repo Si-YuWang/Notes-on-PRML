@@ -14,6 +14,8 @@
 \usepackage{theorem}
 \usepackage{algorithmicx}
 \usepackage{ulem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 \usepackage[nottoc]{tocbibind}
 \def\ci{\perp\!\!\!\perp}
@@ -1442,19 +1444,19 @@ $f(\cdot)$ is the component density function. Then the expression for the regres
    & =\frac{\int tp(\xx,t)\ud t}{\int p(\xx,t)\ud t} \\
    & = \frac{\sum_n \int tf(\xx-\xx_n,t-t_n)\ud t}{\sum_m \int f(\xx-\xx_m,t-t_m)\ud t}
 \end{align}
-By assuming 
+By assuming
 \begin{equation}\label{}
   \int_{-\infty}^{\infty}f(\xx,t)t\ud t = 0,
 \end{equation}
-we can obtain 
+we can obtain
 \begin{equation}
 y(\xx) = \sum_nk(\xx,\xx_n)t_n
 \end{equation}
-where the kernel function $k(\xx,\xx_n)$ is given by 
+where the kernel function $k(\xx,\xx_n)$ is given by
 \begin{equation}\label{}
   k(\xx,\xx_n) = \frac{g(\xx-\xx_n)}{\sum_m g(\xx-\xx_m)}
 \end{equation}
-and we have defined 
+and we have defined
 \begin{equation}\label{}
   g(\xx) = \int_{-\infty}^{\infty}f(\xx,t)\ud t.
 \end{equation}
@@ -1561,15 +1563,39 @@ In this section we shall look at kernel-based algorithms that have sparse soluti
 \textit{SVM} is a decision machine and so does not provide posterior probabilities.
 \textbf{property}: the  determination of the model parameters corresponds to a convex optimization problem, and so any local solution is also a global optimum.
 \subsection{Maximum Margin Classifiers}
-\textit{margin}: the smallest distance between the decision boudary and any of the samples.
+We begin our discussion of SVM by returning to the two-class classification problem using the linear models of the form
+\begin{equation}\label{}
+  y(\xx) = \ww\trans\phi(\xx)+b.
+\end{equation}
+The training data set comprises $N$ input vectors $\xx_1,\dots,\xx_N$, with corresponding target values $t_1,\dots,t_N$ where $t_n \in \{-1,+1\}$, and new data points $\xx$ are classified according to the sign of $y(\xx)$. We shall assume that the data is separable in the feature space.
 
-In SVM: the decision boundary is chosen to be one for which the margin is maximized.
+There may exist many solutions that separate the classes exactly, so we should try to find the one that will give the smallest generalization error. Then we define \textit{margin} to be the smallest distance between the decision boundary and any of the samples. In SVM the decision boundary is chosen to be the one for which the margin is maximized.
 
-If the data set is not linearly seperable in the original space, we can project them into another feature space using basis functions $\phi()$  to make them seperable.
+The perpendicular distance of a point $\xx$ from \textit{a hyperplane defined by} $ (y\xx) = 0$ where $y(\xx)$ take the form $y(\xx)=\ww\trans\phi(\xx)+b$ is given by $\frac{|y(\xx)|}{\|\ww|}$. Because we are only interested in solutions that classify all the data points correctly, so $t_ny(\xx_n)>0$ holds for any $n$. Thus the distance of a point $\xx_n$ to the decision surface is  given by
+\begin{equation}\label{}
+  \frac{t_ny(\xx_n)}{\|\ww\|}=\frac{t_n(\ww\trans\phi(\xx_n)+b)}{\|\ww\|}.
+\end{equation}
+The margin is given by the perpendicular distance to the closest point $\xx_n$ from the data set, and we want to optimize the parameters $\ww$ and $b$ in order to maximize this distance:
+\begin{equation}\label{}
+  \arg\max_{\ww,b}\{\frac1{\|\ww\|}\min_n[t_n(\ww\trans\phi(\xx_n)+b)]\}
+\end{equation}
+where we have taken the factor $\|\ww\|$ outside the optimization over $n$ because $\ww$ dose not depend on $n$. Direct solution of this optimization problem would be very
+complex, and so we shall convert it into an equivalent problem that is much easier to solve. Note that if we make the rescaling $\ww \rightarrow \kappa\ww$ and $b\rightarrow \kappa b$, then the distance from any point $\xx_n$ to the decision surface is unchanged. So we can set
+\begin{equation}\label{}
+  t_n(\ww\trans\phi(\xx_n)+b) = 1
+\end{equation}
+for the points that is closest to the surface. In this case, for all data points
+\begin{equation}\label{eq2.6.1}
+  t_n(\ww\trans\phi(\xx_n)+b)\geq 1.
+\end{equation}
+Then the optimization problem simply requires that we maximize $\|\ww\|\rev$, and we have to solve the optimization problem
+\begin{equation}\label{}
+  \arg\min_{\ww,b}\frac12\|\ww\|^2
+\end{equation}
+subject to constraints given by \ref{eq2.6.1}.
 
-\uline{Don't quite understand the mathematical inference in this chapter.  maybe I can try to discuss with other students in our reading group later.}
 
-More application of SVM will be focused on Multiclass SVMs, SVM for regression and overlapping classification.
+
 \subsection{Relevance Vector Machines}
 Limitation of SVM:
 \begin{enumerate}
@@ -2256,5 +2282,154 @@ where
  Suppose the current value of the parameter vector is $\theta^{old}$. In the E step, the lower bound $\mathcal L(q,\theta^{old})$ is maximized with respect to $q(\mrm Z)$ while holding $\theta^{old}$ fixed.
 
  In the subsequent M step, the distribution $q(\mrm Z)$ is held fixed and the lower bound $\mathcal L(q, \theta)$ is maximized with respect to $\theta$ to give some new value $\theta^{new}$.
+
+\section{Sampling Methods}
+The fundamental problem that we want to address in this section is finding the expectation of some function $f(\zz)$ w.r.t a probability distribution $p(\zz)$. Sometimes it is hard to integrate analytically. So our idea is to obtain a set of samples $\zz^{(l)},\ l=1,\dots,L$ drawn from a specific distribution. Then we can approximate the true expectation
+\begin{equation}\label{}
+  \Exp[f]=\int f(\zz)p(\zz)\ud\zz
+\end{equation}
+by a finite sum
+\begin{equation}\label{}
+\hat f=\frac1L\sum_{l=1}^{L}f(\zz^{(l)}.
+\end{equation}
+As long as the samples are drawn from the distribution $p(\zz)$ independently, then $\Exp[f] = \Exp[\hat f]$ and the variance of the estimator $\hat f$ is given by
+\begin{equation}\label{}
+  \mrm{var}[\hat f] =\frac1L\Exp[(f-\Exp[f])^2].
+\end{equation}
+So the accuracy of the estimator therefore does not depend on the dimensionality of z, and that, in principle, high accuracy may be achievable with a relatively small number of samples $\zz^{(l)}$.
+\subsection{Basic sampling algorithms}
+Here we shall assume that we have algorithms to generate \tit{pseudo-random numbers} distributed uniformly over (0,1).
+\subsubsection*{Standard distribution}
+Suppose that $z$ is uniformly distributed over (0,1), and that we transform the values of $z$ using some function $f(\cdot)$ so that $y=f(z)$, then the distribution of $y$ is will be governed by
+\begin{equation}\label{}
+  p(y)=p(z)|\frac{\ud z}{\ud y}| = |\frac{\ud z}{\ud y}|.
+\end{equation}
+Our goal is to choose the function $f(\cdot)$ such that the resulting values of $y$ have some specific desired distribution $p(y)$. Obviously we have
+\begin{equation}\label{}
+  z=f^{-1}(y)=\int_{-\infty}^{y}p(\hat y)\ud \hat y.
+\end{equation}
+So we choose $f(\cdot)$ to be the inverse function of the indefinite integral of $p(y)$.
+
+\subsubsection*{Rejection sampling}
+Suppose $p(z)$ is easily evaluated for any given $z$ up to some normalizing constant $Z$, so that
+\begin{equation}\label{}
+  p(z)=\frac1{Z_p}\tilde{p}(z)
+\end{equation}
+where $\tilde{p}(z)$ can be easily evaluated while $Z_p$ is unknown. We propose some simpler distribution $q(z)$, sometimes called \tit{proposal distribution}, from which we can easily drawn samples. Then set a constant $k$ such that $kq(z)\geq \tilde{p}(z)$ for all values of $z$. We first generate a number $z_0\sim q(z)$, next we generate a number $u_0 \sim \mrm U[0,kq(z_0)]$. Finally, if $u_0>p\tilde p(z_0)$ then the sample is rejected, otherwise $u_0$ is retained.  Thus the remaining pairs then have uniform distribution under the curve of $\tilde p(z)$, and hence the corresponding $z$ values are distributed according to $p(z)$.
+
+The probability of accepting the sample is
+\begin{equation}\label{}
+  p(\mrm{accept})=\int \{\tilde p(z)/kq(z)\}q(z)\ud z=\frac1k\int \tilde p(z)\ud z.
+\end{equation}
+So we want $k$ to be as big as possible subject to the limitation that $kq(z)\geq \tilde p(z)$ for any $z$.
+
+\subsubsection*{Adaptive rejection sampling}
+An adaptive method for finding \tit{proposal distribution}.
+\subsubsection*{Importance sampling}
+The technique is to approximate the expectation directly while not provide a mechanism for drawing samples from distribution $p(\zz)$.
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{./imgs/fig3_4_1.png}
+  \label{fig3.4.1}
+\end{figure}
+
+We can express the expectation in the form of a finite sum over samples $\{\zz^{(l)}\}$ drawn from $q(\zz)$
+\begin{equation}\label{}
+  \Exp[f]=\int f(\zz)p(\zz)\ud \zz=\int f(\zz)\frac{p(\zz)}{q(\zz)}q(\zz)\ud\zz\simeq\frac{1}{L}\sum_{l=1}^{L}\frac{p(\zz^{(l)}}{q(\zz^{(l)})}f(\zz^{(l)}).
+\end{equation}
+The quantities $r_l=p(\zz^{(l)})/q(\zz^{(l)})$ are known as \tit{importance weights}.
+\subsubsection*{Some more things in sampling}
+
+\subsection{Markov Chain Monte Carlo}
+The advantage of MCMC is that it allows sampling from a large class of distributions and scales well with the dimensionality of the sample space.
+
+Here, we maintain a record of the current state $\zz^{(l)}$ and the proposal distribution $q(\zz^{(l+1)}|\zz^{(l)})$ and so the sequence of samples $\zz^{(1)},\zz^{(2)},\dots$ forms a Markov chain. The proposal distribution is simple enough to be sampled. At each cycle of the algorithm, we generate a new candidate sample $\zz^*$ from proposal distribution and then accept it according to some criterion.
+
+In the basic \tit{Metropolis} algorithm, we assume $q(\zz_A|\zz_B) = q(\zz_B|\zz_A)$. Then the candidate sample is accepted with probability
+\begin{equation}\label{}
+  A(\zz^*,\zz^{(\tau)})=\min(1, \frac{\tilde p(\zz^*)}{\tilde p(\zz^{(\tau)})}.
+\end{equation}
+This can be achieved by choosing a random number $u$ with uniform distribution over the unit interval $(0,1)$ and then accepting the sample if $A(\zz^*,\zz^{(\tau)}>u$. Note that if $\tilde p(\zz^*)>\tilde p(\zz^{(\tau)})$, then the candidate point is certain to be kept.
+
+If the candidate is kept then $\zz^{(\tau+1)} = \zz^*$, otherwise the candidate is discarded and $\zz^{(\tau+1)}$ is set to be $\zz^{(\tau)}$. Note that the sequence $\zz^{(1)}, \zz^{(2)}, \dots$ is not a set of independent samples from $p(\zz)$ because they are correlated strongly. But we can obtain independent samples by discarding most of the sequence and just retaining every $W^{\mrm{th}}$ sample.
+\subsubsection*{Markov chain}
+A distribution is said to be invariant, or stationary, with respect to a Markov chain if each step in the chain leaves that distribution invariant. Thus, for a homogeneous Markov chain with transition probabilities $T(\zz,\zz')$, the distribution $p^*(\zz)$ is invariant if
+\begin{equation}\label{}
+  p^*(\zz) = \sum_{\zz'}T(\zz',z)p^*(\zz') = \sum_{\zz'}p(\zz|\zz')p^*(\zz').
+\end{equation}
+
+A sufficient but not necessary condition for ensuring that the required distribution $p(\zz)$ is invariant is to \textbf{choose the transition probabilities} to satisfy the property \tit{detailed balance}, defined by
+\begin{equation}\label{eq3.4.1}
+  p^*(\zz)T(\zz,\zz') = p^*(\zz')T(\zz',\zz).
+\end{equation}
+for a particular distribution $p^*(\zz)$. Note that if \ref{eq3.4.1} holds, then
+\begin{equation}\label{}
+  \sum_{\zz'}p^*(\zz')T(\zz',\zz)=\sum_{\zz'}p^*(\zz)T(\zz,\zz')=p^*(\zz)\sum_{\zz'}p(\zz'|\zz)=p^*(\zz).
+\end{equation}
+So $p^*(\zz)$ is invariant. A Markov chain that respects detailed balance is said to be \tit{reversible}.
+
+Our goal is to use Markov chains to sample from a given distribution. We can achieve this if we set up a Markov chain such that the desired distribution is invariant. However, we must also require that for $m\rightarrow +\infty$, the distribution $p(z^{(m)})$ converges to the required invariant distribution $p^*(\zz)$, irrespective of the choice of the initial distribution $p(z^{(0)})$. This property is called \tit{ergodicity}, and the invariant distribution is then called the equilibrium distribution. Clearly, an ergodic Markov chain can have only one equilibrium distribution.
+\subsubsection*{Metropolis-Hastings algorithm}
+Our goal is to use Markov chains to sample from a given distribution. We can achieve this if we set up a Markov chain such that the desired distribution is invariant. So we define a transition probability $q(\zz'|\zz)$ and we wish the detailed balance $p(\zz)q(\zz'|\zz)=p(\zz')q(\zz|\zz')$ holds, so we add factors $\alpha(\zz,\zz')=q(\zz|\zz')p(\zz'),\ \alpha(\zz',\zz)=q(\zz'|\zz)p(\zz)$ to both sides:
+\begin{equation}\label{eq3.4.2}
+  p(\zz)q(\zz'|\zz)q(\zz|\zz')p(\zz')=p(\zz')q(\zz|\zz')q(\zz'|\zz)p(\zz)
+\end{equation}
+which is sure to be true. So we obtain a new transition probability
+\begin{equation}\label{}
+  q'(\zz'|\zz)=q(\zz'|\zz)q(\zz|\zz')p(\zz').
+\end{equation}
+The factor $\alpha(\zz,\zz')$ is called \textit{accept probability}. When the state on the  Markov chain jumps under the control of $q(\zz,\zz')$, we accept the jump with probability $\alpha(\zz,\zz')$. So the process of the MCMC algorithm can be described as:
+\begin{algorithm}[H]
+\caption{MCMC Sampling Method}
+\begin{algorithmic}[1]
+\Require Target distribution $p(\zz)$
+\Ensure Samples drawn independently from $p(\zz)$
+\State Initialize the state of the Markov chain $X_0 = x_0$
+\State For $t = 0,1,2,\dots$, repeat the following steps to sample
+    \begin{itemize}
+      \item For time slice $t$, the state is $X_t = x_t$, sample $y\sim q(x|x_t)$
+      \item Sample $u\sim \mathrm{Uniform}[0,1]$
+      \item if $u<\alpha(x_t, y)=p(y)q(x_t|y)$ the accept the trainsition, and $X_{t+1}=y$
+      \item else don't accept the transition and $X_{t+1} = x_t$
+    \end{itemize}
+\end{algorithmic}
+\end{algorithm}
+However, sometimes the acceptance probability defined by $\alpha(\zz,\zz')$ is so small that the efficiency is not ensured, so we want to enlarge the probability. And our idea is to enlarge one of $\alpha(\zz,\zz'), \alpha(\zz',\zz)$ to be as large as one, so we choose
+\begin{equation}\label{}
+  \alpha(\zz,\zz')=\min\{\frac{p(\zz')q(\zz|\zz')}{p(\zz)q(\zz'|\zz)}, 1\}.
+\end{equation}
+And we can see
+\begin{equation}\label{}
+\begin{aligned}
+  p(\zz)q(\zz'|\zz)\alpha(\zz,\zz') &= \min\{p(\zz')q(\zz|\zz'), p(\zz)q(\zz'|\zz)\} \\
+  & = p(\zz')q(\zz|\zz')\min\{1, \frac{p(\zz)q(\zz'|\zz)}{p(\zz')q(\zz|\zz')}\} \\
+  & = p(\zz'q(\zz|\zz')\alpha(\zz',\zz) \\
+\end{aligned}
+\end{equation}
+and then detailed balance is satisfied.
+
+\subsection{Gibbs Sampling}
+Gibbs sampling is a special case of Metropolis-Hastings algorithm.
+
+Consider the distribution $p(\zz) = p(z_1,\dots, z_M)$ from which we want to sample, and suppose we have some initial state for the Markov chain. Each step of the Gibbs sampling procedure involves replacing the value of one of the variables by a value drawn from the distribution of that variable conditioned on the values of the remaining variables: replace $z_i$ by a value drawn from $p(z_i|\zz_{\\i}$. So the procedure can be described as:
+\begin{algorithm}
+\caption{Gibbs Sampling algorithm}
+\begin{algorithmic}
+\Require Target distriibution $p(\zz)$
+\Ensure Samples drawn independently from $p(\zz)$
+\State Initialize $\{z_i: i=1, 2, \dots, M\}$
+\State For $\tau=1, \dots, T$:
+\begin{itemize}
+  \item Sample $z_1^{(\tau+1)}\sim p(z_1|z_2^{(\tau)}, \dots, z_M^{(\tau)})$
+  \item Sample $z_2^{(\tau+1)}\sim p(z_2|z_1^{(\tau+1)}, z_3^{(\tau)}, \dots, z_M^{(\tau)})$
+  \newline $\vdots$
+  \item Sample $z_j^{(\tau+1)}\sim p(z_j|z_1^{(\tau+1)},\dots, z_{j-1}^{(\tau+1)},z_j^{(\tau)}, \dots,z_M^{(\tau)})$
+  \item Sample $z_M^{(\tau+1)}\sim p(z_M|z_1^{(\tau+1)},\dots, z_{M-1}^{(\tau+1)}$
+\end{itemize}
+\end{algorithmic}
+\end{algorithm}
+
+
+
 
 \end{document} 
